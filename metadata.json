@@ -1,0 +1,6 @@
+{
+  "name": "Silphor Technologies - Industrial Solutions & VLSI Engineering Platform",
+  "description": "Enterprise platform for Silphor Technologies offering industrial technology distribution, EDA tools, VLSI/embedded training, student portal, course registrations, and corporate engineering staffing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
