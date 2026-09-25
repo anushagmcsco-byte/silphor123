@@ -18,6 +18,12 @@ export const ResourcesView: React.FC = () => {
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('All');
   const [faqSearch, setFaqSearch] = useState('');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const [resourceNotice, setResourceNotice] = useState<string | null>(null);
+
+  const showNotice = (msg: string) => {
+    setResourceNotice(msg);
+    setTimeout(() => setResourceNotice(null), 3500);
+  };
 
   const categories = ['All', 'Training', 'Industrial Solutions', 'Certifications', 'Placements'];
 
@@ -91,6 +97,13 @@ export const ResourcesView: React.FC = () => {
         <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
           Access verified tool installation guides, deep-dive semiconductor engineering blogs, and answers to frequently asked questions regarding admissions, certifications, and industrial technology bridging.
         </p>
+
+        {resourceNotice && (
+          <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-xl text-xs font-semibold flex items-center justify-between">
+            <span>{resourceNotice}</span>
+            <button onClick={() => setResourceNotice(null)} className="underline text-[11px]">Dismiss</button>
+          </div>
+        )}
       </section>
 
       {/* SECTION 1: EDA / FPGA SETUP GUIDES */}
@@ -126,7 +139,7 @@ export const ResourcesView: React.FC = () => {
               <div className="mt-6 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span className="text-[11px] text-slate-400 font-mono">PDF &bull; Official</span>
                 <button
-                  onClick={() => alert(`Simulated Download: ${guide.file}`)}
+                  onClick={() => showNotice(`Downloading setup guide: ${guide.file}`)}
                   className="px-3 py-1.5 bg-teal-50 text-[#00828A] hover:bg-teal-100 font-bold rounded-lg flex items-center gap-1.5 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -168,7 +181,7 @@ export const ResourcesView: React.FC = () => {
               <div className="mt-6 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span className="text-[11px] text-slate-500 font-semibold">{art.author}</span>
                 <button
-                  onClick={() => alert(`Reading full article: ${art.title}`)}
+                  onClick={() => showNotice(`Accessing whitepaper archive for: ${art.title}`)}
                   className="text-xs font-bold text-[#00828A] hover:underline"
                 >
                   Read Article

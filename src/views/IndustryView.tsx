@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { MOCK_VENDORS, MOCK_PRODUCTS } from '../data/mockDatabase';
 import { VendorPartner, IndustrialProduct } from '../types';
+import { saveFormSubmission } from '../utils/formStorage';
 
 interface IndustryViewProps {
   onRegisterTraining: (courseId?: string) => void;
@@ -34,6 +35,8 @@ export const IndustryView: React.FC<IndustryViewProps> = ({ onRegisterTraining, 
   const [reqType, setReqType] = useState('EDA Tool Licensing');
   const [reqDetails, setReqDetails] = useState('');
   const [requestSubmitted, setRequestSubmitted] = useState(false);
+  const [downloadNotice, setDownloadNotice] = useState<string | null>(null);
+  const [industryTrackingId, setIndustryTrackingId] = useState('');
 
   const categories = ['All', 'FPGA & Silicon', 'EDA Software', 'Test & Measurement', 'Embedded Platforms'];
 
@@ -49,10 +52,32 @@ export const IndustryView: React.FC<IndustryViewProps> = ({ onRegisterTraining, 
   const handleRequestSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reqCompany || !reqEmail) return;
+
+    const saved = saveFormSubmission({
+      pageSource: 'industry',
+      pageLabel: 'Industry Solutions',
+      formTitle: 'EDA Tool & Hardware Requisition',
+      senderName: reqContactName || reqCompany,
+      senderEmail: reqEmail,
+      senderPhone: reqPhone,
+      organizationOrCollege: reqCompany,
+      subject: `${reqType} Requisition - ${reqCompany}`,
+      message: reqDetails || `Requisition for ${reqType}`,
+      formData: {
+        company: reqCompany,
+        contactPerson: reqContactName,
+        category: reqType,
+        details: reqDetails,
+        phone: reqPhone,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'High',
+      notes: `EDA / Industrial hardware enquiry for ${reqType}. Forwarded to FAE and procurement desks.`,
+    });
+
+    setIndustryTrackingId(saved.id);
     setRequestSubmitted(true);
-    setTimeout(() => {
-      // Keep confirmed state
-    }, 400);
   };
 
   return (
@@ -234,6 +259,13 @@ export const IndustryView: React.FC<IndustryViewProps> = ({ onRegisterTraining, 
           </p>
         </div>
 
+        {downloadNotice && (
+          <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-xl text-xs font-semibold flex items-center justify-between">
+            <span>{downloadNotice}</span>
+            <button onClick={() => setDownloadNotice(null)} className="underline text-[11px]">Dismiss</button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {MOCK_PRODUCTS.map((prod) => (
             <div
@@ -271,7 +303,10 @@ export const IndustryView: React.FC<IndustryViewProps> = ({ onRegisterTraining, 
                 <div className="flex items-center gap-2">
                   {prod.datasheetAvailable && (
                     <button
-                      onClick={() => alert(`Simulated Download: Official Datasheet for ${prod.name} downloaded.`)}
+                      onClick={() => {
+                        setDownloadNotice(`Official Datasheet for ${prod.name} ready for download.`);
+                        setTimeout(() => setDownloadNotice(null), 3000);
+                      }}
                       className="px-2.5 py-1 text-xs border border-slate-300 rounded text-slate-700 hover:bg-slate-100 flex items-center gap-1 font-semibold"
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -319,7 +354,8 @@ export const IndustryView: React.FC<IndustryViewProps> = ({ onRegisterTraining, 
               Industrial Technology Enquiry Logged Successfully
             </h3>
             <p className="text-xs text-emerald-800 max-w-md mx-auto">
-              Our Technical Application Engineering team has received your requisition. A Field Application Engineer (FAE) will contact you within 24 business hours with datasheet proposals and vendor pricing.
+              Our Technical Application Engineering team has received your requisition{' '}
+              <span className="font-mono font-bold text-emerald-950">[{industryTrackingId || 'SUB-2026-IND'}]</span>. It has been recorded in the central Administrative Portal. A Field Application Engineer (FAE) will contact you within 24 business hours with datasheet proposals and vendor pricing.
             </p>
             <button
               onClick={() => setRequestSubmitted(false)}

@@ -13,20 +13,27 @@ import { ProjectsInternshipView } from './views/ProjectsInternshipView';
 import { ContactView } from './views/ContactView';
 import { RegistrationView } from './views/RegistrationView';
 import { AdminView } from './views/AdminView';
+import { AdminLoginView } from './views/AdminLoginView';
+import { TermsOfServiceView } from './views/TermsOfServiceView';
+import { PrivacyPolicyView } from './views/PrivacyPolicyView';
 import { DynamicMenuGuideModal } from './components/DynamicMenuGuideModal';
 import { CertificateVerificationModal } from './components/CertificateVerificationModal';
+import { FloatingSupportWidgets } from './components/FloatingSupportWidgets';
+import { updatePageSEO } from './utils/seoConfig';
 import { MainNavId, UserRole, StudentRegistration, PaymentTransaction } from './types';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<MainNavId | 'admin-panel' | 'registration'>('home');
+  const [activeTab, setActiveTab] = useState<MainNavId | 'admin-panel' | 'admin-login' | 'registration'>('home');
   const [activeRole, setActiveRole] = useState<UserRole>('public');
+  const [adminUser, setAdminUser] = useState<{ name: string; email: string; role: string } | null>(null);
   const [guideModalOpen, setGuideModalOpen] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
   const [preselectedCourseId, setPreselectedCourseId] = useState<string | undefined>();
 
-  // Scroll to top upon tab changes
+  // Scroll to top and update dynamic SEO / OpenGraph / Schema metadata upon tab changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    updatePageSEO(activeTab);
   }, [activeTab]);
 
   const handleStartRegistration = (courseId?: string) => {
@@ -35,19 +42,50 @@ export default function App() {
   };
 
   const handleRegistrationCompleted = (reg: StudentRegistration, payment: PaymentTransaction) => {
-    // Automatically transition to students portal or show confirmed state
     setActiveRole('student');
     setActiveTab('students');
   };
 
+  const handleAdminLoginSuccess = (user: { name: string; email: string; role: string }) => {
+    setAdminUser(user);
+    setActiveRole('admin');
+    setActiveTab('admin-panel');
+  };
+
+  const handleAdminLogout = () => {
+    setAdminUser(null);
+    setActiveRole('public');
+    setActiveTab('admin-login');
+  };
+
+  // If currently on admin-login, render the dedicated standalone responsive login screen
+  if (activeTab === 'admin-login') {
+    return (
+      <AdminLoginView
+        onLoginSuccess={handleAdminLoginSuccess}
+        onBackToHome={() => setActiveTab('home')}
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-800">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-800 antialiased selection:bg-teal-500/20 selection:text-[#0B2545]">
       {/* Top Dynamic Navigation Bar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         activeRole={activeRole}
-        setActiveRole={setActiveRole}
+        setActiveRole={(role) => {
+          setActiveRole(role);
+          if (role === 'admin' && !adminUser) {
+            setActiveTab('admin-login');
+          } else if (role === 'admin') {
+            setActiveTab('admin-panel');
+          }
+        }}
+        adminSession={adminUser}
+        onAdminLoginClick={() => setActiveTab('admin-login')}
+        onAdminLogout={handleAdminLogout}
         onOpenGuide={() => setGuideModalOpen(true)}
         onOpenCertificateModal={() => setCertModalOpen(true)}
         onStartRegistration={handleStartRegistration}
@@ -115,6 +153,14 @@ export default function App() {
           <ContactView />
         )}
 
+        {activeTab === 'terms-of-service' && (
+          <TermsOfServiceView onNavigate={setActiveTab} />
+        )}
+
+        {activeTab === 'privacy-policy' && (
+          <PrivacyPolicyView onNavigate={setActiveTab} />
+        )}
+
         {activeTab === 'registration' && (
           <RegistrationView
             initialCourseId={preselectedCourseId}
@@ -124,7 +170,18 @@ export default function App() {
         )}
 
         {activeTab === 'admin-panel' && (
-          <AdminView />
+          adminUser ? (
+            <AdminView
+              adminUser={adminUser}
+              onLogout={handleAdminLogout}
+              onNavigateHome={() => setActiveTab('home')}
+            />
+          ) : (
+            <AdminLoginView
+              onLoginSuccess={handleAdminLoginSuccess}
+              onBackToHome={() => setActiveTab('home')}
+            />
+          )
         )}
       </main>
 
@@ -133,13 +190,25 @@ export default function App() {
         isOpen={guideModalOpen}
         onClose={() => setGuideModalOpen(false)}
         activeRole={activeRole}
-        onSelectRole={setActiveRole}
+        onSelectRole={(r) => {
+          setActiveRole(r);
+          if (r === 'admin' && !adminUser) {
+            setActiveTab('admin-login');
+          }
+        }}
       />
 
       {/* Certificate Verification Modal */}
       <CertificateVerificationModal
         isOpen={certModalOpen}
         onClose={() => setCertModalOpen(false)}
+      />
+
+      {/* Global Floating Actions: Direct Helpline (+91 9876543210) & Virtual Chatbot */}
+      <FloatingSupportWidgets
+        onNavigate={setActiveTab}
+        onOpenCertificateModal={() => setCertModalOpen(true)}
+        onStartRegistration={handleStartRegistration}
       />
 
       {/* Global Footer */}

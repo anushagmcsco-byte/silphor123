@@ -10,7 +10,9 @@ export type MainNavId =
   | 'students'
   | 'resources'
   | 'projects-internship'
-  | 'contact';
+  | 'contact'
+  | 'terms-of-service'
+  | 'privacy-policy';
 
 export interface NavItemConfig {
   id: MainNavId;
@@ -154,4 +156,36 @@ export interface FAQItem {
   question: string;
   answer: string;
   category: 'Training' | 'Industrial Solutions' | 'Certifications' | 'Placements';
+}
+
+export type FormPageSource =
+  | 'contact'
+  | 'industry'
+  | 'engineering-services'
+  | 'projects-internship'
+  | 'registration'
+  | 'training'
+  | 'students'
+  | 'about'
+  | 'privacy-policy'
+  | 'terms-of-service'
+  | 'support-widget';
+
+export interface FormSubmission {
+  id: string;
+  submissionDate: string;
+  pageSource: FormPageSource;
+  pageLabel: string;
+  formTitle: string;
+  senderName: string;
+  senderEmail: string;
+  senderPhone?: string;
+  organizationOrCollege?: string;
+  subject?: string;
+  message?: string;
+  formData: Record<string, any>;
+  status: 'New' | 'In Review' | 'Contacted' | 'Action Taken' | 'Archived';
+  priority: 'High' | 'Medium' | 'Low';
+  notes?: string;
+  assignedStaff?: string;
 }

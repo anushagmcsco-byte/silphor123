@@ -1,0 +1,121 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#07172B"/>
+      <stop offset="50%" stop-color="#0B2545"/>
+      <stop offset="100%" stop-color="#030C17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="600" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00828A"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1E3A5F" stroke-width="1" stroke-opacity="0.25"/>
+      <circle cx="40" cy="0" r="1.5" fill="#38BDF8" fill-opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Circuit trace lines decorative -->
+  <g stroke="#38BDF8" stroke-width="2" stroke-opacity="0.4" stroke-linecap="round">
+    <path d="M 0 180 L 140 180 L 200 240 L 320 240" />
+    <circle cx="320" cy="240" r="4" fill="#38BDF8" />
+    <path d="M 0 220 L 100 220 L 160 280 L 260 280" />
+    <circle cx="260" cy="280" r="4" fill="#38BDF8" />
+    <path d="M 900 380 L 980 380 L 1040 320 L 1200 320" />
+    <circle cx="900" cy="380" r="4" fill="#00828A" />
+    <path d="M 960 440 L 1050 440 L 1100 390 L 1200 390" />
+    <circle cx="960" cy="440" r="4" fill="#00828A" />
+  </g>
+
+  <!-- Glow circles -->
+  <circle cx="1000" cy="200" r="280" fill="#00828A" fill-opacity="0.08" filter="blur(80px)"/>
+  <circle cx="200" cy="500" r="220" fill="#38BDF8" fill-opacity="0.06" filter="blur(60px)"/>
+
+  <!-- Brand Lockup (Top Left) -->
+  <g transform="translate(80, 70)">
+    <g transform="scale(0.18)">
+      <g stroke="#FFFFFF" stroke-width="7" stroke-linecap="round">
+        <path d="M 60 120 L 120 120 L 160 160 L 210 160" />
+        <circle cx="60" cy="120" r="9" fill="#FFFFFF" />
+        <path d="M 50 160 L 150 160 L 175 185 L 215 185" />
+        <circle cx="50" cy="160" r="9" fill="#FFFFFF" />
+      </g>
+      <g stroke="#38BDF8" stroke-width="7" stroke-linecap="round">
+        <path d="M 330 220 L 390 220 L 440 170 L 480 170" />
+        <circle cx="480" cy="170" r="9" fill="#38BDF8" />
+        <path d="M 330 240 L 400 240 L 430 205 L 465 205" />
+        <circle cx="465" cy="205" r="9" fill="#38BDF8" />
+      </g>
+      <path d="M 285 55 L 180 55 C 145 55 125 78 125 112 C 125 142 145 165 185 174 L 255 188 C 275 192 285 200 285 218 C 285 235 268 252 230 252 L 140 252 L 125 212 L 190 212 C 208 212 218 206 218 198 C 218 188 206 179 178 174 L 142 165 C 102 153 90 124 90 95 C 90 48 128 15 192 15 L 295 15 Z" fill="#FFFFFF" />
+      <path d="M 250 55 L 350 55 C 395 55 425 84 425 124 C 425 164 395 194 350 194 L 295 194 L 295 285 L 250 310 Z M 295 93 L 295 156 L 344 156 C 368 156 382 144 382 124 C 382 104 368 93 344 93 Z" fill="#38BDF8" />
+      <rect x="232" y="260" width="36" height="36" rx="4" stroke="#38BDF8" stroke-width="3.5" fill="#081B33"/>
+      <rect x="240" y="268" width="20" height="20" rx="2" fill="#38BDF8" fill-opacity="0.6"/>
+    </g>
+    <text x="110" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" letter-spacing="4">SILPHOR</text>
+    <text x="110" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="12" fill="#38BDF8" letter-spacing="6">TECHNOLOGIES</text>
+  </g>
+
+  <!-- Tag / Badge -->
+  <g transform="translate(80, 190)">
+    <rect width="316" height="36" rx="18" fill="#00828A" fill-opacity="0.25" stroke="#00828A" stroke-width="1.5"/>
+    <text x="158" y="23" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#38BDF8" letter-spacing="2" text-anchor="middle">ADMISSIONS & ENROLLMENT</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="295" font-family="system-ui, sans-serif" font-weight="900" font-size="52" fill="#FFFFFF" letter-spacing="-1">
+    Course Registration &
+  </text>
+  <text x="80" y="360" font-family="system-ui, sans-serif" font-weight="900" font-size="52" fill="url(#accent)" letter-spacing="-1">
+    Batch Enrollment
+  </text>
+
+  <!-- Subtitle -->
+  <text x="80" y="425" font-family="system-ui, sans-serif" font-size="20" font-weight="400" fill="#94A3B8">
+    Apply for upcoming cohorts in VLSI Design, Embedded Linux, and PCB Engineering.
+  </text>
+  <text x="80" y="455" font-family="system-ui, sans-serif" font-size="20" font-weight="400" fill="#94A3B8">
+    Instant seat reservation, scholarship assessment, and instant verification.
+  </text>
+
+  <!-- Key Points -->
+  <g transform="translate(80, 495)">
+    <g transform="translate(0, 0)">
+      <circle cx="10" cy="14" r="5" fill="#38BDF8"/>
+      <text x="25" y="19" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#E2E8F0">Upcoming Cohorts</text>
+    </g>
+    <g transform="translate(240, 0)">
+      <circle cx="10" cy="14" r="5" fill="#38BDF8"/>
+      <text x="25" y="19" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#E2E8F0">Scholarship Grants</text>
+    </g>
+    <g transform="translate(480, 0)">
+      <circle cx="10" cy="14" r="5" fill="#38BDF8"/>
+      <text x="25" y="19" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#E2E8F0">Instant Verification</text>
+    </g>
+  </g>
+
+  <!-- Right Visual Card -->
+  <g transform="translate(840, 160)">
+    <rect width="280" height="340" rx="20" fill="#081B33" stroke="#1E3A5F" stroke-width="2"/>
+    <rect x="20" y="20" width="240" height="300" rx="14" fill="#040D1A" stroke="#00828A" stroke-width="1.5" stroke-opacity="0.6"/>
+    <!-- IC Silicon Die Art -->
+    <rect x="60" y="60" width="160" height="160" rx="10" fill="#0B2545" stroke="#38BDF8" stroke-width="2"/>
+    <path d="M 60 100 L 100 100 L 100 60 M 180 60 L 180 100 L 220 100 M 60 180 L 100 180 L 100 220 M 180 220 L 180 180 L 220 180" stroke="#38BDF8" stroke-width="2" fill="none"/>
+    <circle cx="140" cy="140" r="32" fill="#00828A" fill-opacity="0.4" stroke="#38BDF8" stroke-width="2"/>
+    <text x="140" y="146" font-family="system-ui, sans-serif" font-weight="900" font-size="15" fill="#FFFFFF" text-anchor="middle">ADMISSIONS</text>
+    <text x="140" y="260" font-family="system-ui, sans-serif" font-weight="700" font-size="13" fill="#38BDF8" text-anchor="middle" letter-spacing="2">SILPHOR SECURE</text>
+    <text x="140" y="282" font-family="monospace" font-size="11" fill="#64748B" text-anchor="middle">LIMITED SEATS</text>
+  </g>
+
+  <!-- Bottom Bar -->
+  <line x1="80" y1="570" x2="1120" y2="570" stroke="#1E3A5F" stroke-width="1"/>
+  <text x="80" y="600" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#64748B">
+    HQ: #45 East Road, Malleswaram, Bangalore - 560003 &bull; +91 9876543210
+  </text>
+  <text x="1120" y="600" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#38BDF8" text-anchor="end">
+    silphortechnologies.com
+  </text>
+</svg>

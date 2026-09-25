@@ -39,6 +39,12 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
 
   // Video Player state
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [studentNotice, setStudentNotice] = useState<string | null>(null);
+
+  const showNotice = (msg: string) => {
+    setStudentNotice(msg);
+    setTimeout(() => setStudentNotice(null), 3500);
+  };
 
   const studentProfile = {
     name: 'Ananya Sharma',
@@ -200,6 +206,13 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
       </div>
 
       {/* PORTAL NAV TABS */}
+      {studentNotice && (
+        <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-xl text-xs font-semibold flex items-center justify-between shadow-2xs">
+          <span>{studentNotice}</span>
+          <button onClick={() => setStudentNotice(null)} className="underline text-[11px]">Dismiss</button>
+        </div>
+      )}
+
       <div className="flex border-b border-slate-200 bg-white rounded-xl px-4 shadow-2xs overflow-x-auto">
         {[
           { id: 'dashboard', label: 'Overview Dashboard', icon: Layers },
@@ -314,7 +327,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
                 Join Dr. Nambiar on the live compute cluster for hands-on Cadence Innovus Clock Tree Optimization.
               </p>
               <button
-                onClick={() => alert('Launching Secure Student Cloud Virtual Machine Workstation...')}
+                onClick={() => showNotice('Secure EDA Workstation: Initializing remote cloud Linux desktop on cluster...')}
                 className="w-full py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
               >
                 <Cpu className="w-4 h-4" />
@@ -397,8 +410,9 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
                   </div>
                 </div>
                 <button
-                  onClick={() => alert(`Simulated Download: ${mat.name}`)}
+                  onClick={() => showNotice(`Downloading file: ${mat.name}`)}
                   className="p-2 text-slate-600 hover:text-[#00828A] hover:bg-slate-50 rounded-lg"
+                  aria-label="Download material"
                 >
                   <Download className="w-4 h-4" />
                 </button>
@@ -428,7 +442,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
                     </span>
                   </div>
                   <button
-                    onClick={() => alert('Simulated Upload: Submitting updated assignment file.')}
+                    onClick={() => showNotice('Assignment upload confirmed: New archive submitted for grading.')}
                     className="px-3 py-1.5 text-xs font-semibold text-[#00828A] border border-teal-300 rounded-lg hover:bg-teal-50"
                   >
                     Resubmit
@@ -590,7 +604,7 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
                     </div>
                   </div>
                   <button
-                    onClick={() => alert(`Applied for ${job.role} at ${job.company} with your Silphor verified credential!`)}
+                    onClick={() => showNotice(`Application dispatched: Verified profile submitted for ${job.role} at ${job.company}`)}
                     className="mt-4 w-full py-1.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-semibold rounded-lg"
                   >
                     1-Click Apply

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { MOCK_ENGINEER_REQUIREMENTS } from '../data/mockDatabase';
 import { EngineerRequirement } from '../types';
+import { saveFormSubmission } from '../utils/formStorage';
 
 export const EngineeringServicesView: React.FC = () => {
   const [requirementsList, setRequirementsList] = useState<EngineerRequirement[]>(
@@ -31,6 +32,7 @@ export const EngineeringServicesView: React.FC = () => {
   const [skillsText, setSkillsText] = useState('Innovus, PrimeTime, 7nm FinFET, CTS');
   const [location, setLocation] = useState('Bengaluru (Hybrid)');
   const [submitted, setSubmitted] = useState(false);
+  const [servicesTrackingId, setServicesTrackingId] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +52,34 @@ export const EngineeringServicesView: React.FC = () => {
     };
 
     setRequirementsList([newReq, ...requirementsList]);
+
+    const saved = saveFormSubmission({
+      pageSource: 'engineering-services',
+      pageLabel: 'Engineering Services',
+      formTitle: 'Silicon Staffing & Turnkey Requirement',
+      senderName: companyName,
+      senderEmail: contactEmail,
+      senderPhone: contactPhone,
+      organizationOrCollege: companyName,
+      subject: `Staffing Requisition: ${positionsCount}x ${roleTitle} (${domain})`,
+      message: `Required ${positionsCount} engineers with ${experienceRequired} experience in ${skillsText}. Work location: ${location}.`,
+      formData: {
+        companyName,
+        roleTitle,
+        domain,
+        positionsCount,
+        experienceRequired,
+        requiredSkills: skillsText,
+        location,
+        contactPhone,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'High',
+      notes: `Staffing requisition registered for ${companyName}. Forwarded to semiconductor talent placement cell.`,
+    });
+
+    setServicesTrackingId(saved.id);
     setSubmitted(true);
   };
 
@@ -133,7 +163,8 @@ export const EngineeringServicesView: React.FC = () => {
               Skilled Engineer Requisition Successfully Registered
             </h3>
             <p className="text-xs text-emerald-800 max-w-md mx-auto">
-              Our Technical Staffing Lead will contact <strong>{contactEmail}</strong> with qualified candidate dossiers and schedule technical screening calls.
+              Our Technical Staffing Lead has recorded your requisition{' '}
+              <span className="font-mono font-bold text-emerald-950">[{servicesTrackingId || 'SUB-2026-ENG'}]</span> into Admin Governance. We will contact <strong>{contactEmail}</strong> with qualified candidate dossiers and schedule technical screening calls.
             </p>
             <button
               onClick={() => setSubmitted(false)}

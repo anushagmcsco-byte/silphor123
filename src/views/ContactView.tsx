@@ -12,6 +12,7 @@ import {
   Building2,
   Navigation
 } from 'lucide-react';
+import { saveFormSubmission } from '../utils/formStorage';
 
 export const ContactView: React.FC = () => {
   const [senderName, setSenderName] = useState('');
@@ -20,30 +21,40 @@ export const ContactView: React.FC = () => {
   const [department, setDepartment] = useState('Training & Course Admissions');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [trackingId, setTrackingId] = useState('');
 
   const offices = [
     {
-      city: 'Bengaluru (Corporate Headquarters & EDA Labs)',
-      address: 'Silphor Technology Tower, Outer Ring Road, Marathahalli-Sarjapur Junction, Bengaluru, Karnataka 560103',
-      phone: '+91 (080) 4920-8800 / +91 98450 12345',
-      email: 'bengaluru@silphor.com',
-      hours: 'Mon - Fri: 9:00 AM - 7:00 PM IST',
-      coordinates: '12.9279° N, 77.6848° E',
+      city: 'Bengaluru (Corporate Headquarters & Engineering Center)',
+      address: '#45 East Road, Malleswaram, Bangalore, Karnataka - 560003, India',
+      landmark: 'Near 8th Cross Cultural Hub & Malleswaram Ground',
+      phone: '+91 9876543210',
+      whatsapp: '+91 9876543210',
+      whatsappUrl: 'https://wa.me/919876543210?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services',
+      emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
+      hours: 'Mon - Fri: 9:00 AM - 7:00 PM IST | Sat: 9:30 AM - 5:30 PM IST',
+      coordinates: '13.0031° N, 77.5685° E (Malleswaram)',
     },
     {
       city: 'Hyderabad (Silicon Design & Staffing Center)',
       address: 'Level 4, Cyber Gateway, HITEC City, Madhapur, Hyderabad, Telangana 500081',
-      phone: '+91 (040) 6821-4400',
-      email: 'hyderabad@silphor.com',
-      hours: 'Mon - Fri: 9:00 AM - 6:30 PM IST',
+      landmark: 'Opposite Cyber Towers',
+      phone: '+91 9876543210',
+      whatsapp: '+91 9876543210',
+      whatsappUrl: 'https://wa.me/919876543210',
+      emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
+      hours: 'Mon - Fri: 9:00 AM - 6:30 PM IST | Sat: 9:30 AM - 5:30 PM IST',
       coordinates: '17.4474° N, 78.3762° E',
     },
     {
       city: 'Chennai (Hardware & PCB Engineering Center)',
       address: 'Module 3, Tidel Park, Rajiv Gandhi Salai (OMR), Taramani, Chennai, Tamil Nadu 600113',
-      phone: '+91 (044) 4390-2200',
-      email: 'chennai@silphor.com',
-      hours: 'Mon - Fri: 9:00 AM - 6:00 PM IST',
+      landmark: 'Tidel Park Technology Corridor',
+      phone: '+91 9876543210',
+      whatsapp: '+91 9876543210',
+      whatsappUrl: 'https://wa.me/919876543210',
+      emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
+      hours: 'Mon - Fri: 9:00 AM - 6:00 PM IST | Sat: 9:30 AM - 5:30 PM IST',
       coordinates: '12.9892° N, 80.2483° E',
     },
   ];
@@ -51,6 +62,27 @@ export const ContactView: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!senderName || !senderEmail) return;
+
+    const saved = saveFormSubmission({
+      pageSource: 'contact',
+      pageLabel: 'Contact Us Page',
+      formTitle: 'General & Technical Inquiry',
+      senderName,
+      senderEmail,
+      senderPhone: senderMobile,
+      subject: `Enquiry for ${department}`,
+      message: message || `Enquiry routed to ${department}`,
+      formData: {
+        department,
+        senderMobile,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'High',
+      notes: `Received from Contact Page for ${department}. Automated dispatch queued.`,
+    });
+
+    setTrackingId(saved.id);
     setSubmitted(true);
   };
 
@@ -91,7 +123,7 @@ export const ContactView: React.FC = () => {
               </h3>
               <p className="text-xs text-emerald-800 max-w-md mx-auto">
                 Thank you, <strong>{senderName}</strong>. Your enquiry has been assigned tracking ID{' '}
-                <span className="font-mono font-bold">SIL-ENQ-2026-9042</span>. A notification confirmation has been sent to <strong>{senderEmail}</strong>.
+                <span className="font-mono font-bold">{trackingId || 'SIL-ENQ-2026-9042'}</span>. Stored in Administrative Governance and dispatched to <strong>{senderEmail}</strong>.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
@@ -195,19 +227,54 @@ export const ContactView: React.FC = () => {
                 </div>
                 <div className="text-xs text-slate-600 flex items-start gap-2">
                   <MapPin className="w-3.5 h-3.5 text-[#00828A] shrink-0 mt-0.5" />
-                  <span>{office.address}</span>
+                  <div>
+                    <div className="font-semibold text-slate-800">{office.address}</div>
+                    {office.landmark && (
+                      <div className="text-[11px] text-amber-700 font-medium mt-0.5">
+                        Landmark: {office.landmark}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-xs text-slate-600 flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{office.phone}</span>
+
+                <div className="text-xs text-slate-700 flex flex-wrap items-center justify-between gap-2 pt-1">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="font-medium">Direct Telephone & WhatsApp:</span>
+                    <a href={`tel:${office.phone.replace(/[^0-9+]/g, '')}`} className="font-bold text-[#0B2545] hover:underline">
+                      {office.phone}
+                    </a>
+                  </div>
+                  {office.whatsappUrl && (
+                    <a
+                      href={office.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold hover:bg-emerald-100 transition-colors"
+                    >
+                      <span>💬 Chat on WhatsApp ({office.whatsapp})</span>
+                    </a>
+                  )}
                 </div>
-                <div className="text-xs text-slate-600 flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{office.email}</span>
+
+                <div className="text-xs text-slate-600 flex items-start gap-2">
+                  <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                    <span className="font-medium text-slate-700">Official Electronic Mail:</span>
+                    {office.emails.map((mail, mi) => (
+                      <a key={mi} href={`mailto:${mail}`} className="text-[#00828A] hover:underline font-mono">
+                        {mail}
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-500 flex items-center gap-2">
+
+                <div className="text-[11px] text-slate-600 flex items-center gap-2 pt-0.5">
                   <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{office.hours}</span>
+                  <div>
+                    <span className="font-semibold text-slate-700">Operational Hours: </span>
+                    <span>Monday - Friday: 9:00 AM - 7:00 PM IST | Saturday: 9:30 AM - 5:30 PM IST</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -220,7 +287,7 @@ export const ContactView: React.FC = () => {
                 <Navigation className="w-3.5 h-3.5 text-[#00828A]" />
                 Google Maps Facility Navigator
               </span>
-              <span className="text-[10px] font-mono text-slate-300">Bengaluru Technology Center</span>
+              <span className="text-[10px] font-mono text-slate-300">#45 East Road, Malleswaram, Bangalore - 560003</span>
             </div>
 
             {/* Map Canvas Graphic */}
@@ -238,13 +305,14 @@ export const ContactView: React.FC = () => {
                 <div className="p-2 rounded-full bg-[#00828A] text-white shadow-lg animate-bounce">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div className="mt-1 px-2.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shadow-md">
-                  Silphor HQ Bengaluru
+                <div className="mt-1 px-2.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shadow-md text-center">
+                  Silphor HQ Malleswaram, Bangalore
+                  <div className="text-[9px] text-teal-300 font-normal">Near 8th Cross Cultural Hub & Malleswaram Ground</div>
                 </div>
               </div>
 
               <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-xs p-1.5 rounded text-[10px] text-slate-700 shadow-xs">
-                Map Data &bull; Google Maps Grounded
+                Malleswaram 8th Cross Hub &bull; Bangalore 560003
               </div>
             </div>
           </div>

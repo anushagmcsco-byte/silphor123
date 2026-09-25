@@ -20,6 +20,7 @@ import {
 import { Course, StudentRegistration, PaymentTransaction } from '../types';
 import { MOCK_COURSES } from '../data/mockDatabase';
 import { SilphorLogo } from '../components/SilphorLogo';
+import { saveFormSubmission } from '../utils/formStorage';
 
 interface RegistrationViewProps {
   initialCourseId?: string;
@@ -137,6 +138,40 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
 
       setFinalRegistration(newRegistration);
       setFinalPayment(newPayment);
+
+      saveFormSubmission({
+        id: appNum,
+        pageSource: 'registration',
+        pageLabel: 'Registration & Admissions',
+        formTitle: 'Course Enrolment Application',
+        senderName: fullName,
+        senderEmail: email,
+        senderPhone: mobile,
+        organizationOrCollege: collegeOrCompany,
+        subject: `Enrolment: ${selectedCourse.title} (${selectedCourse.upcomingBatches.find(b => b.id === selectedBatchId)?.name || 'Standard Batch'})`,
+        message: `Student enrolled in ${selectedCourse.title}. Highest qualification: ${highestDegree} (${graduationYear}). Deposit paid: ₹${initialPayAmount.toLocaleString()}.`,
+        formData: {
+          applicationNumber: appNum,
+          courseId: selectedCourse.id,
+          courseTitle: selectedCourse.title,
+          batchId: selectedBatchId,
+          batchName: selectedCourse.upcomingBatches.find(b => b.id === selectedBatchId)?.name || 'Standard Batch',
+          degree: highestDegree,
+          graduationYear,
+          collegeOrCompany,
+          initialPayAmount,
+          totalFee: baseFee - discountAmount,
+          paymentStatus: paymentOption === 'full' ? 'Paid' : 'Partial',
+          transactionId: txnId,
+          gateway: selectedGateway,
+          documentsUploaded: uploadedFiles,
+          submittedAt: new Date().toISOString(),
+        },
+        status: 'In Review',
+        priority: 'High',
+        notes: `Admissions application verified with OTP. Advance ₹${initialPayAmount} confirmed via ${selectedGateway}.`,
+      });
+
       onComplete(newRegistration, newPayment);
       setStep(5);
     }, 1500);

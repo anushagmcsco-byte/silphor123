@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Compass, 
   Target, 
@@ -9,9 +9,13 @@ import {
   Building2, 
   GraduationCap, 
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Send,
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { SilphorLogo } from '../components/SilphorLogo';
+import { saveFormSubmission } from '../utils/formStorage';
 
 interface AboutViewProps {
   onNavigate: (tab: any) => void;
@@ -19,6 +23,48 @@ interface AboutViewProps {
 }
 
 export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onRegisterCourse }) => {
+  // Institutional MoU Partnership Form State
+  const [mouInstName, setMouInstName] = useState('');
+  const [mouContactPerson, setMouContactPerson] = useState('');
+  const [mouEmail, setMouEmail] = useState('');
+  const [mouPhone, setMouPhone] = useState('');
+  const [mouType, setMouType] = useState('University / Autonomous Engineering College');
+  const [mouScope, setMouScope] = useState('Setting up VLSI Centre of Excellence (CoE)');
+  const [mouNotes, setMouNotes] = useState('');
+  const [mouSubmitted, setMouSubmitted] = useState(false);
+  const [mouTrackingId, setMouTrackingId] = useState('');
+
+  const handleMouSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mouInstName || !mouEmail) return;
+
+    const saved = saveFormSubmission({
+      pageSource: 'about',
+      pageLabel: 'About Us & Academic MoUs',
+      formTitle: 'Institutional MoU & Academic Partnership Request',
+      senderName: mouContactPerson || mouInstName,
+      senderEmail: mouEmail,
+      senderPhone: mouPhone,
+      organizationOrCollege: mouInstName,
+      subject: `MoU Partnership: ${mouScope} (${mouInstName})`,
+      message: mouNotes || `Institution: ${mouInstName} (${mouType}). Scope: ${mouScope}.`,
+      formData: {
+        institutionName: mouInstName,
+        contactPerson: mouContactPerson,
+        institutionType: mouType,
+        partnershipScope: mouScope,
+        phone: mouPhone,
+        notes: mouNotes,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'High',
+      notes: `Academic MoU request from ${mouInstName}. Route to Director of Academic Standards (Dr. R. K. Nambiar).`,
+    });
+
+    setMouTrackingId(saved.id);
+    setMouSubmitted(true);
+  };
   const trainers = [
     {
       name: 'Dr. R. K. Nambiar',
@@ -261,6 +307,161 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onRegisterCour
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ACADEMIC & INSTITUTIONAL MOU PARTNERSHIP FORM */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold">
+              <Globe className="w-3.5 h-3.5" />
+              <span>Academic Alliances & Corporate Partnerships</span>
+            </div>
+            <h3 className="text-2xl font-bold text-[#0B2545] font-display mt-1">
+              Institutional MoU & VLSI Centre of Excellence Proposal
+            </h3>
+            <p className="text-xs text-slate-600 max-w-2xl mt-0.5 leading-relaxed">
+              Engineering colleges, universities, and corporate tech departments can partner with Silphor Technologies to establish certified semiconductor design labs, faculty development programs, and direct campus placement pipelines.
+            </p>
+          </div>
+        </div>
+
+        {mouSubmitted ? (
+          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+            <h4 className="text-lg font-bold text-emerald-950 font-display">
+              MoU Proposal Logged with Academic Directorate
+            </h4>
+            <p className="text-xs text-emerald-800 max-w-md mx-auto">
+              Thank you, <strong>{mouContactPerson || mouInstName}</strong>. Your institutional proposal{' '}
+              <span className="font-mono font-bold">[{mouTrackingId || 'SUB-2026-MOU'}]</span> has been recorded in our central Administrative Portal. Our Academic Standards team will review your proposal and contact <strong>{mouEmail}</strong> within 48 hours.
+            </p>
+            <button
+              onClick={() => setMouSubmitted(false)}
+              className="px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-xl hover:bg-emerald-800 transition-colors"
+            >
+              Submit Another Institutional Proposal
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleMouSubmit} className="space-y-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Institution / University / Company Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. RV College of Engineering / Qualcomm Labs"
+                  value={mouInstName}
+                  onChange={(e) => setMouInstName(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Designated Contact Person & Designation *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. H. S. Ramesh, Head of ECE Dept"
+                  value={mouContactPerson}
+                  onChange={(e) => setMouContactPerson(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Official Institutional Email *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="hod.ece@rvce.edu.in"
+                  value={mouEmail}
+                  onChange={(e) => setMouEmail(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Phone / Mobile Number
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+91 98450 99881"
+                  value={mouPhone}
+                  onChange={(e) => setMouPhone(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Organization Classification
+                </label>
+                <select
+                  value={mouType}
+                  onChange={(e) => setMouType(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                >
+                  <option>University / Autonomous Engineering College</option>
+                  <option>Affiliated Technical Institute / Polytechnic</option>
+                  <option>Semiconductor Enterprise / Design House</option>
+                  <option>Government Research Lab (DRDO / ISRO / CSIR)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Primary Partnership Scope
+                </label>
+                <select
+                  value={mouScope}
+                  onChange={(e) => setMouScope(e.target.value)}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                >
+                  <option>Setting up VLSI Centre of Excellence (CoE)</option>
+                  <option>EDA Software & Floating License Academic Distribution</option>
+                  <option>Faculty Development Program (FDP) & Student Workshops</option>
+                  <option>Joint Industry MPW Tape-out & Capstone Mentorship</option>
+                  <option>Direct Campus Recruitment & Internship Drive</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Proposal Overview & Requirements
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Detail your batch sizes, current lab infrastructure, target timeline, or specific EDA tools needed..."
+                  value={mouNotes}
+                  onChange={(e) => setMouNotes(e.target.value)}
+                  className="w-full p-3 border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-slate-500 text-[11px]">
+                Bengaluru Head Office: <strong className="text-slate-700">Malleswaram Hub</strong> &bull; +91 9876543210
+              </span>
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white font-bold rounded-xl shadow-xs flex items-center gap-2 transition-all cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Submit Institutional Proposal</span>
+              </button>
+            </div>
+          </form>
+        )}
       </section>
 
       {/* BOTTOM CTA */}

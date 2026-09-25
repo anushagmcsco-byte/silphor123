@@ -13,10 +13,14 @@ import {
   Zap, 
   Radio, 
   Search,
-  Users
+  Users,
+  Send,
+  Download,
+  Phone
 } from 'lucide-react';
 import { Course } from '../types';
 import { MOCK_COURSES } from '../data/mockDatabase';
+import { saveFormSubmission } from '../utils/formStorage';
 
 interface TrainingViewProps {
   onRegisterCourse: (courseId?: string) => void;
@@ -27,6 +31,46 @@ export const TrainingView: React.FC<TrainingViewProps> = ({ onRegisterCourse, on
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCourseModal, setActiveCourseModal] = useState<Course | null>(null);
+
+  // Training Page Consultation Form State
+  const [inqName, setInqName] = useState('');
+  const [inqEmail, setInqEmail] = useState('');
+  const [inqPhone, setInqPhone] = useState('');
+  const [inqCourse, setInqCourse] = useState('Advanced VLSI Design & Physical Implementation');
+  const [inqBackground, setInqBackground] = useState('B.E / B.Tech Student (ECE/EEE)');
+  const [inqMessage, setInqMessage] = useState('');
+  const [inqSubmitted, setInqSubmitted] = useState(false);
+  const [inqTrackingId, setInqTrackingId] = useState('');
+
+  const handleInquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inqName || !inqEmail) return;
+
+    const saved = saveFormSubmission({
+      pageSource: 'training',
+      pageLabel: 'Training & Syllabus Inquiries',
+      formTitle: 'Syllabus Brochure & Course Counseling Request',
+      senderName: inqName,
+      senderEmail: inqEmail,
+      senderPhone: inqPhone,
+      organizationOrCollege: inqBackground,
+      subject: `Syllabus & Guidance Request: ${inqCourse}`,
+      message: inqMessage || `Learner background: ${inqBackground}. Interested in ${inqCourse}.`,
+      formData: {
+        targetCourse: inqCourse,
+        learnerBackground: inqBackground,
+        phone: inqPhone,
+        message: inqMessage,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'Medium',
+      notes: `Prospective learner inquiry from Training Page for ${inqCourse}. Send syllabus brochure and arrange advisor callback.`,
+    });
+
+    setInqTrackingId(saved.id);
+    setInqSubmitted(true);
+  };
 
   const categories = ['All', 'VLSI', 'PCB', 'Embedded', 'Power Electronics'];
 
@@ -171,7 +215,161 @@ export const TrainingView: React.FC<TrainingViewProps> = ({ onRegisterCourse, on
         ))}
       </div>
 
-      {/* COURSE SYLLABUS & DETAILS MODAL */}
+      {/* INTERACTIVE FORM: REQUEST SYLLABUS BROCHURE & COURSE COUNSELING */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-5 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-[#00828A] text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Academic Advisory & Syllabus Access</span>
+            </div>
+            <h3 className="text-2xl font-bold text-[#0B2545] font-display">
+              Request Detailed Course Syllabus & 1-on-1 Trainer Counseling
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Unsure which specialization matches your career objectives? Submit your details to receive the comprehensive 12-week lab curriculum PDF, tool license requirements, and a free 15-minute counseling session with Dr. R. K. Nambiar.
+            </p>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs text-slate-600">
+              <div className="flex items-center gap-2 text-slate-900 font-bold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>What you will receive immediately:</span>
+              </div>
+              <ul className="space-y-1 pl-6 list-disc text-slate-600">
+                <li>Complete day-by-day lab exercise workbook</li>
+                <li>EDA Tool server remote login prerequisites</li>
+                <li>Past placement salary benchmark dossier</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7">
+            {inqSubmitted ? (
+              <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+                <h4 className="text-lg font-bold text-emerald-950 font-display">
+                  Syllabus & Advisory Request Registered
+                </h4>
+                <p className="text-xs text-emerald-800 max-w-md mx-auto">
+                  Thank you, <strong>{inqName}</strong>! Your inquiry{' '}
+                  <span className="font-mono font-bold">[{inqTrackingId || 'SUB-2026-TRN'}]</span> has been logged in the Administrative Governance console. The syllabus package has been queued for <strong>{inqEmail}</strong>.
+                </p>
+                <button
+                  onClick={() => setInqSubmitted(false)}
+                  className="px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-xl hover:bg-emerald-800 transition-colors"
+                >
+                  Submit Another Inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleInquirySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      Full Legal Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Kavita Sundaram"
+                      value={inqName}
+                      onChange={(e) => setInqName(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="kavita.s@pes.edu"
+                      value={inqEmail}
+                      onChange={(e) => setInqEmail(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      WhatsApp / Mobile Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="+91 98450 12345"
+                      value={inqPhone}
+                      onChange={(e) => setInqPhone(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      Current Learner Profile
+                    </label>
+                    <select
+                      value={inqBackground}
+                      onChange={(e) => setInqBackground(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    >
+                      <option>B.E / B.Tech Student (ECE/EEE)</option>
+                      <option>M.Tech / M.S in VLSI or Microelectronics</option>
+                      <option>Working Hardware Engineer looking to upskill</option>
+                      <option>College Faculty / Academic Department Head</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      Course Curriculum of Primary Interest
+                    </label>
+                    <select
+                      value={inqCourse}
+                      onChange={(e) => setInqCourse(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    >
+                      {MOCK_COURSES.map((c) => (
+                        <option key={c.id} value={c.title}>
+                          {c.title} ({c.duration} - {c.mode})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                      Questions for Trainer / Specific Career Goals
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="e.g. Can I attend the physical lab at Malleswaram on weekends? Do you cover Innovus CTS in detail?"
+                      value={inqMessage}
+                      onChange={(e) => setInqMessage(e.target.value)}
+                      className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-[11px] text-slate-500">
+                    Direct Counselor Hotline: <strong className="text-[#00828A]">+91 9876543210</strong>
+                  </span>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Dispatch Inquiry to Admin</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
       {activeCourseModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs overflow-y-auto">
           <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">

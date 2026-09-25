@@ -11,6 +11,7 @@ import {
   Code2, 
   ExternalLink 
 } from 'lucide-react';
+import { saveFormSubmission } from '../utils/formStorage';
 
 export const ProjectsInternshipView: React.FC = () => {
   const [internName, setInternName] = useState('');
@@ -19,6 +20,7 @@ export const ProjectsInternshipView: React.FC = () => {
   const [internDomain, setInternDomain] = useState('VLSI Physical Design & STA');
   const [internDuration, setInternDuration] = useState('6 Months (Full-Time Tape-Out)');
   const [submitted, setSubmitted] = useState(false);
+  const [internTrackingId, setInternTrackingId] = useState('');
 
   const capstoneProjects = [
     {
@@ -47,6 +49,30 @@ export const ProjectsInternshipView: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!internName || !internEmail) return;
+
+    const saved = saveFormSubmission({
+      pageSource: 'projects-internship',
+      pageLabel: 'Projects & Internships',
+      formTitle: 'IEEE Internship & Academic Project Application',
+      senderName: internName,
+      senderEmail: internEmail,
+      organizationOrCollege: internCollege,
+      subject: `Internship Application: ${internDomain} (${internDuration})`,
+      message: `Applicant from ${internCollege} applying for ${internDomain} internship (${internDuration}).`,
+      formData: {
+        internName,
+        internEmail,
+        internCollege,
+        internDomain,
+        internDuration,
+        submittedAt: new Date().toISOString(),
+      },
+      status: 'New',
+      priority: 'Medium',
+      notes: `Internship applicant from ${internCollege}. Queue online technical screening test.`,
+    });
+
+    setInternTrackingId(saved.id);
     setSubmitted(true);
   };
 
@@ -127,7 +153,8 @@ export const ProjectsInternshipView: React.FC = () => {
               Internship Application Registered
             </h3>
             <p className="text-xs text-emerald-800 max-w-md mx-auto">
-              Our academic selection committee has received your details. You will receive an invitation to the online technical screening test at <strong>{internEmail}</strong>.
+              Our academic selection committee has recorded your application{' '}
+              <span className="font-mono font-bold text-emerald-950">[{internTrackingId || 'SUB-2026-INT'}]</span> into Admin Governance. You will receive an invitation to the online technical screening test at <strong>{internEmail}</strong>.
             </p>
             <button
               onClick={() => setSubmitted(false)}
