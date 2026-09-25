@@ -1,0 +1,8 @@
+# https://silphor123-p8c5.vercel.app/robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-panel
+Disallow: /admin-login
+
+Sitemap: https://silphor123-p8c5.vercel.app/sitemap.xml
