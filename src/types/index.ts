@@ -166,6 +166,7 @@ export type FormPageSource =
   | 'registration'
   | 'training'
   | 'students'
+  | 'resources'
   | 'about'
   | 'privacy-policy'
   | 'terms-of-service'

@@ -21,6 +21,7 @@ import {
   Receipt
 } from 'lucide-react';
 import { SilphorLogo } from '../components/SilphorLogo';
+import { saveFormSubmission } from '../utils/formStorage';
 
 interface StudentsViewProps {
   onVerifyCert: () => void;
@@ -604,8 +605,36 @@ export const StudentsView: React.FC<StudentsViewProps> = ({ onVerifyCert, onOpen
                     </div>
                   </div>
                   <button
-                    onClick={() => showNotice(`Application dispatched: Verified profile submitted for ${job.role} at ${job.company}`)}
-                    className="mt-4 w-full py-1.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-semibold rounded-lg"
+                    onClick={() => {
+                      const entry = saveFormSubmission({
+                        pageSource: 'students',
+                        pageLabel: 'Student Career & Support',
+                        formTitle: 'Placement Drive Application & Profile Submission',
+                        senderName: studentProfile.name,
+                        senderEmail: 'ananya.sharma@example.com',
+                        senderPhone: '+91 98450 12345',
+                        organizationOrCollege: studentProfile.course,
+                        subject: `Job Application: ${job.role} at ${job.company}`,
+                        message: `Student ${studentProfile.name} applied for ${job.role} at ${job.company} (${job.location}). Registered batch: ${studentProfile.batch}. Course Attendance: ${studentProfile.attendancePercent}%. Average Academic Score: ${studentProfile.avgScore}%.`,
+                        formData: {
+                          candidateName: studentProfile.name,
+                          regNumber: studentProfile.regNumber,
+                          course: studentProfile.course,
+                          batch: studentProfile.batch,
+                          targetCompany: job.company,
+                          targetRole: job.role,
+                          location: job.location,
+                          stipend: job.stipend,
+                          attendancePercent: `${studentProfile.attendancePercent}%`,
+                          submittedAt: new Date().toISOString(),
+                        },
+                        status: 'New',
+                        priority: 'High',
+                        notes: `Placement application submitted from Student Portal for ${job.company}. Review verified academic records and arrange interview schedule.`,
+                      });
+                      showNotice(`Application ${entry.id} dispatched! Profile submitted for ${job.role} at ${job.company}. Logged in Admin Governance.`);
+                    }}
+                    className="mt-4 w-full py-1.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-semibold rounded-lg cursor-pointer transition-colors shadow-2xs"
                   >
                     1-Click Apply
                   </button>

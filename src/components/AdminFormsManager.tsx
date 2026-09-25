@@ -109,24 +109,27 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
   // Page source labels & color mapping
   const pageSourceMeta: Record<
     FormPageSource,
-    { label: string; bg: string; text: string; border: string; icon: any }
+    { label: string; route: string; bg: string; text: string; border: string; icon: any }
   > = {
     contact: {
-      label: 'Contact Us Page',
+      label: 'Contact Us',
+      route: '/contact-us',
       bg: 'bg-sky-50',
       text: 'text-sky-700',
       border: 'border-sky-200',
       icon: Mail,
     },
     industry: {
-      label: 'Industry & EDA Solutions',
+      label: 'Industry Solutions',
+      route: '/industry',
       bg: 'bg-indigo-50',
       text: 'text-indigo-700',
       border: 'border-indigo-200',
       icon: Building2,
     },
     'engineering-services': {
-      label: 'Engineering Services',
+      label: 'Engineering Staffing',
+      route: '/engineering-services',
       bg: 'bg-teal-50',
       text: 'text-teal-700',
       border: 'border-teal-200',
@@ -134,48 +137,63 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
     },
     'projects-internship': {
       label: 'Projects & Internships',
+      route: '/projects-internship',
       bg: 'bg-amber-50',
       text: 'text-amber-800',
       border: 'border-amber-200',
       icon: Sparkles,
     },
     registration: {
-      label: 'Course Admissions & Enrolment',
+      label: 'Course Registration',
+      route: '/registration',
       bg: 'bg-emerald-50',
       text: 'text-emerald-700',
       border: 'border-emerald-200',
       icon: User,
     },
     training: {
-      label: 'Training & Syllabus Inquiries',
+      label: 'Training Programs',
+      route: '/training',
       bg: 'bg-purple-50',
       text: 'text-purple-700',
       border: 'border-purple-200',
       icon: FileText,
     },
     students: {
-      label: 'Student Career & Support',
+      label: 'Student Portal & Placement',
+      route: '/students',
       bg: 'bg-cyan-50',
       text: 'text-cyan-700',
       border: 'border-cyan-200',
       icon: User,
     },
+    resources: {
+      label: 'Resources & Technical Guides',
+      route: '/resources',
+      bg: 'bg-blue-50',
+      text: 'text-blue-700',
+      border: 'border-blue-200',
+      icon: FileText,
+    },
     about: {
-      label: 'About & Academic MoUs',
+      label: 'About Us & MoUs',
+      route: '/about-us',
       bg: 'bg-violet-50',
       text: 'text-violet-700',
       border: 'border-violet-200',
       icon: Globe,
     },
     'privacy-policy': {
-      label: 'Privacy & DPDP Rights Requests',
+      label: 'Privacy Policy & DPDP',
+      route: '/privacy-policy',
       bg: 'bg-rose-50',
       text: 'text-rose-700',
       border: 'border-rose-200',
       icon: ShieldCheck,
     },
     'terms-of-service': {
-      label: 'Terms & Compliance Inquiries',
+      label: 'Terms & Compliance',
+      route: '/terms-of-service',
       bg: 'bg-slate-100',
       text: 'text-slate-700',
       border: 'border-slate-300',
@@ -183,6 +201,7 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
     },
     'support-widget': {
       label: 'Live Support & Callback',
+      route: '/contact-us',
       bg: 'bg-orange-50',
       text: 'text-orange-700',
       border: 'border-orange-200',
@@ -615,6 +634,7 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
                 'registration',
                 'training',
                 'students',
+                'resources',
                 'about',
                 'privacy-policy',
                 'support-widget',
@@ -648,6 +668,33 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
               );
             })}
           </div>
+
+          {/* Active Particular Page Section Banner */}
+          {selectedPageFilter !== 'all' && pageSourceMeta[selectedPageFilter as FormPageSource] && (
+            <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 flex flex-wrap items-center justify-between gap-3 text-xs animate-in fade-in duration-150">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00828A] animate-pulse shrink-0" />
+                <span className="text-slate-600">Originating Page Section:</span>
+                <strong className="text-[#0B2545] font-bold">
+                  {pageSourceMeta[selectedPageFilter as FormPageSource].label}
+                </strong>
+                <code className="px-2 py-0.5 rounded bg-white text-[#00828A] font-mono text-[11px] font-bold border border-teal-200">
+                  {pageSourceMeta[selectedPageFilter as FormPageSource].route}
+                </code>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-slate-500 font-medium">
+                  {filteredSubmissions.length} submission{filteredSubmissions.length === 1 ? '' : 's'} logged
+                </span>
+                <button
+                  onClick={() => setSelectedPageFilter('all')}
+                  className="px-2 py-0.5 text-xs font-bold text-[#00828A] hover:underline cursor-pointer"
+                >
+                  Show All Pages &rarr;
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -715,10 +762,13 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-bold border ${meta.bg} ${meta.text} ${meta.border}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-bold border ${meta.bg} ${meta.text} ${meta.border}`}
                         >
                           <PageIcon className="w-3 h-3" />
                           <span>{meta.label}</span>
+                          {meta.route && (
+                            <span className="opacity-75 font-mono text-[9.5px]">({meta.route})</span>
+                          )}
                         </span>
 
                         <span className="text-[10px] font-mono text-slate-400">
@@ -885,6 +935,9 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
                           >
                             <PageIcon className="w-3 h-3" />
                             <span>{meta.label}</span>
+                            {meta.route && (
+                              <span className="opacity-75 font-mono text-[9.5px]">({meta.route})</span>
+                            )}
                           </span>
                         </td>
 
@@ -1018,9 +1071,16 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
                 <h3 className="text-lg sm:text-xl font-bold font-display text-white">
                   {activeSubmission.formTitle}
                 </h3>
-                <div className="flex items-center gap-1.5 text-xs text-teal-300">
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>Particular Page: <strong>{activeSubmission.pageLabel}</strong></span>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-teal-300">
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5" />
+                    <span>Particular Page Section: <strong>{pageSourceMeta[activeSubmission.pageSource]?.label || activeSubmission.pageLabel}</strong></span>
+                  </div>
+                  {pageSourceMeta[activeSubmission.pageSource]?.route && (
+                    <span className="px-2 py-0.5 rounded bg-white/10 text-teal-200 border border-teal-500/30 font-mono text-[10px]">
+                      {pageSourceMeta[activeSubmission.pageSource].route}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -1280,14 +1340,15 @@ export const AdminFormsManager: React.FC<AdminFormsManagerProps> = ({ onNotify }
                   onChange={(e) => setSimPage(e.target.value as any)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white font-bold text-slate-800"
                 >
-                  <option value="contact">Contact Us Page (/contact)</option>
+                  <option value="contact">Contact Us Page (/contact-us)</option>
                   <option value="industry">Industry & EDA Solutions (/industry)</option>
                   <option value="engineering-services">Engineering Services (/engineering-services)</option>
                   <option value="projects-internship">Projects & Internships (/projects-internship)</option>
-                  <option value="registration">Course Admissions (/registration)</option>
+                  <option value="registration">Course Registration (/registration)</option>
                   <option value="training">Training & Syllabus (/training)</option>
-                  <option value="students">Student Career & Placement (/students)</option>
-                  <option value="about">About Us & Academic MoUs (/about)</option>
+                  <option value="students">Student Portal & Placement (/students)</option>
+                  <option value="resources">Resources & Technical Guides (/resources)</option>
+                  <option value="about">About Us & Academic MoUs (/about-us)</option>
                   <option value="privacy-policy">Privacy & DPDP Data Rights (/privacy-policy)</option>
                   <option value="support-widget">Live Support Helpline Widget</option>
                 </select>

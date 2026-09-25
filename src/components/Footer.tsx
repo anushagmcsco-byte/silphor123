@@ -1,15 +1,16 @@
 import React from 'react';
 import { SilphorLogo } from './SilphorLogo';
 import { MainNavId } from '../types';
+import { getTabPath, AppNavTarget } from '../utils/navigation';
 import { 
   Award, 
   Code2, 
   MapPin, 
   Phone, 
   Mail, 
-  ShieldCheck,
-  ChevronRight,
-  Scale
+  ShieldCheck, 
+  ChevronRight, 
+  Scale 
 } from 'lucide-react';
 
 interface FooterProps {
@@ -25,13 +26,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Column 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <button
-              onClick={() => onNavigate('home')}
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('home');
+              }}
               className="inline-flex items-center text-left bg-transparent p-0 border-0 cursor-pointer hover:opacity-90 transition-opacity focus:outline-hidden"
               title="Silphor Technologies - Home"
             >
               <SilphorLogo variant="monochromeWhite" size="sm" />
-            </button>
+            </a>
 
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm mt-3">
               Silphor Technologies acts as an international bridge connecting global hardware, software, and EDA tool vendors with industry requirements in Semiconductor, VLSI, Embedded, and Power Electronics engineering.
@@ -40,25 +45,29 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenGuide}
-                className="px-3 py-1.5 rounded-lg bg-[#00828A]/20 hover:bg-[#00828A]/30 border border-[#00828A]/40 text-[#38BDF8] text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-[#00828A]/20 hover:bg-[#00828A]/30 border border-[#00828A]/40 text-[#38BDF8] text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Code2 className="w-3.5 h-3.5" />
                 <span>Backend Menu Architecture</span>
               </button>
               <button
                 onClick={onVerifyCert}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Award className="w-3.5 h-3.5 text-[#00828A]" />
                 <span>Verify Credentials</span>
               </button>
-              <button
-                onClick={() => onNavigate('admin-login')}
-                className="px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 text-[11px] font-semibold flex items-center gap-1.5 transition-colors"
+              <a
+                href="/admin-login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate('admin-login');
+                }}
+                className="px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
                 <span>Admin Login</span>
-              </button>
+              </a>
             </div>
           </div>
 
@@ -70,29 +79,49 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
               </h4>
               <ul className="space-y-2 mt-3 text-slate-400">
                 <li>
-                  <button onClick={() => onNavigate('home')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <a
+                    href="/"
+                    onClick={(e) => { e.preventDefault(); onNavigate('home'); }}
+                    className="hover:text-white transition-colors cursor-pointer text-left block"
+                  >
                     Home
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => onNavigate('about')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <a
+                    href="/about-us"
+                    onClick={(e) => { e.preventDefault(); onNavigate('about'); }}
+                    className="hover:text-white transition-colors cursor-pointer text-left block"
+                  >
                     About Us & Vision
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => onNavigate('industry')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <a
+                    href="/industry"
+                    onClick={(e) => { e.preventDefault(); onNavigate('industry'); }}
+                    className="hover:text-white transition-colors cursor-pointer text-left block"
+                  >
                     Industry Solutions & Vendors
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => onNavigate('technology')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <a
+                    href="/technology"
+                    onClick={(e) => { e.preventDefault(); onNavigate('technology'); }}
+                    className="hover:text-white transition-colors cursor-pointer text-left block"
+                  >
                     Technology & Silicon Stack
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => onNavigate('engineering-services')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  <a
+                    href="/engineering-services"
+                    onClick={(e) => { e.preventDefault(); onNavigate('engineering-services'); }}
+                    className="hover:text-white transition-colors cursor-pointer text-left block"
+                  >
                     Engineering Staffing Services
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -103,24 +132,26 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
               </h5>
               <ul className="space-y-2 mt-2 text-slate-400">
                 <li>
-                  <button
-                    onClick={() => onNavigate('privacy-policy')}
+                  <a
+                    href="/privacy-policy"
+                    onClick={(e) => { e.preventDefault(); onNavigate('privacy-policy'); }}
                     className="hover:text-[#38BDF8] transition-colors cursor-pointer text-left flex items-center gap-1.5 group"
                     aria-label="Navigate to Privacy Policy"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-[#00828A] group-hover:text-[#38BDF8] transition-colors" />
                     <span className="group-hover:underline underline-offset-2">Privacy Policy</span>
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
-                    onClick={() => onNavigate('terms-of-service')}
+                  <a
+                    href="/terms-of-service"
+                    onClick={(e) => { e.preventDefault(); onNavigate('terms-of-service'); }}
                     className="hover:text-[#38BDF8] transition-colors cursor-pointer text-left flex items-center gap-1.5 group"
                     aria-label="Navigate to Terms of Service"
                   >
                     <Scale className="w-3.5 h-3.5 text-[#00828A] group-hover:text-[#38BDF8] transition-colors" />
                     <span className="group-hover:underline underline-offset-2">Terms of Service</span>
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -133,29 +164,49 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
             </h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <button onClick={() => onNavigate('training')} className="hover:text-white transition-colors">
+                <a
+                  href="/training"
+                  onClick={(e) => { e.preventDefault(); onNavigate('training'); }}
+                  className="hover:text-white transition-colors block"
+                >
                   VLSI & RTL Training
-                </button>
+                </a>
               </li>
               <li>
-                <button onClick={() => onNavigate('training')} className="hover:text-white transition-colors">
+                <a
+                  href="/training"
+                  onClick={(e) => { e.preventDefault(); onNavigate('training'); }}
+                  className="hover:text-white transition-colors block"
+                >
                   High-Speed PCB Design
-                </button>
+                </a>
               </li>
               <li>
-                <button onClick={() => onNavigate('students')} className="hover:text-white transition-colors">
+                <a
+                  href="/students"
+                  onClick={(e) => { e.preventDefault(); onNavigate('students'); }}
+                  className="hover:text-white transition-colors block"
+                >
                   Student Portal & LMS
-                </button>
+                </a>
               </li>
               <li>
-                <button onClick={() => onNavigate('projects-internship')} className="hover:text-white transition-colors">
+                <a
+                  href="/projects-internship"
+                  onClick={(e) => { e.preventDefault(); onNavigate('projects-internship'); }}
+                  className="hover:text-white transition-colors block"
+                >
                   Projects & Internship
-                </button>
+                </a>
               </li>
               <li>
-                <button onClick={() => onNavigate('resources')} className="hover:text-white transition-colors">
+                <a
+                  href="/resources"
+                  onClick={(e) => { e.preventDefault(); onNavigate('resources'); }}
+                  className="hover:text-white transition-colors block"
+                >
                   EDA Setup Guides & Blog
-                </button>
+                </a>
               </li>
             </ul>
           </div>

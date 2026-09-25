@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, 
   Users, 
@@ -763,7 +763,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
       <div className="flex border-b border-slate-200 bg-white rounded-xl px-4 shadow-2xs overflow-x-auto">
         {[
           { id: 'overview', label: 'Dashboard & Directives', icon: BarChart3 },
-          { id: 'forms', label: `Form Inquiries by Page (${formSubmissionsCount})`, icon: Inbox },
+          { id: 'forms', label: `Form Inquiries by Page Section (${formSubmissionsCount})`, icon: Inbox },
           { id: 'registrations', label: `Registrations (${registrations.length})`, icon: Users },
           { id: 'payments', label: `Transactions (${payments.length})`, icon: CreditCard },
           { id: 'courses', label: `Courses & Batches (${courses.length})`, icon: BookOpen },

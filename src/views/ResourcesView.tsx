@@ -10,15 +10,28 @@ import {
   ChevronUp, 
   ExternalLink,
   Cpu,
-  Sparkles
+  Sparkles,
+  Send,
+  CheckCircle2
 } from 'lucide-react';
 import { MOCK_FAQS } from '../data/mockDatabase';
+import { saveFormSubmission } from '../utils/formStorage';
 
 export const ResourcesView: React.FC = () => {
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('All');
   const [faqSearch, setFaqSearch] = useState('');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const [resourceNotice, setResourceNotice] = useState<string | null>(null);
+
+  // Whitepaper & Manual Request Form State
+  const [reqName, setReqName] = useState('');
+  const [reqEmail, setReqEmail] = useState('');
+  const [reqPhone, setReqPhone] = useState('');
+  const [reqOrg, setReqOrg] = useState('');
+  const [reqDocType, setReqDocType] = useState('Synopsys PrimeTime MCMM Script Bundle');
+  const [reqNotes, setReqNotes] = useState('');
+  const [reqSubmitted, setReqSubmitted] = useState(false);
+  const [reqTrackingId, setReqTrackingId] = useState('');
 
   const showNotice = (msg: string) => {
     setResourceNotice(msg);
@@ -265,6 +278,166 @@ export const ResourcesView: React.FC = () => {
             );
           })}
         </div>
+      </section>
+
+      {/* TECHNICAL DOCUMENT & EDA SCRIPT REQUISITION FORM */}
+      <section className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-[#00828A] text-[11px] font-bold">
+              <FileText className="w-3.5 h-3.5" />
+              <span>Technical Whitepaper & Manual Dispatch</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#0B2545] font-display mt-1">
+              Request Specific EDA Setup Manual or Engineering Script
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Need comprehensive Vivado BSP setup files, Synopsys PrimeTime MCMM scripts, or high-speed PCB stackup rules? Submit your requisition below.
+            </p>
+          </div>
+          <span className="text-[11px] text-slate-400 font-mono">Dispatches to Admin Governance</span>
+        </div>
+
+        {reqSubmitted ? (
+          <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+            <h3 className="text-base font-bold text-emerald-950 font-display">
+              Technical Resource Requisition Logged
+            </h3>
+            <p className="text-xs text-emerald-800 max-w-md mx-auto">
+              Thank you, <strong>{reqName}</strong>. Your request for <strong>{reqDocType}</strong> has been assigned tracking ID{' '}
+              <span className="font-mono font-bold">{reqTrackingId}</span> and queued in the Administrative Portal under the <strong>Resources</strong> page section.
+            </p>
+            <button
+              onClick={() => {
+                setReqSubmitted(false);
+                setReqNotes('');
+              }}
+              className="px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-lg hover:bg-emerald-800 cursor-pointer"
+            >
+              Request Another Document
+            </button>
+          </div>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!reqName || !reqEmail) return;
+
+              const saved = saveFormSubmission({
+                pageSource: 'resources',
+                pageLabel: 'Resources & Technical Guides',
+                formTitle: 'EDA Setup Manual & Technical Whitepaper Request',
+                senderName: reqName,
+                senderEmail: reqEmail,
+                senderPhone: reqPhone,
+                organizationOrCollege: reqOrg,
+                subject: `Resource Request: ${reqDocType}`,
+                message: reqNotes || `Requisition for ${reqDocType} by ${reqName} (${reqOrg || 'Independent Engineer'}).`,
+                formData: {
+                  documentRequested: reqDocType,
+                  organization: reqOrg,
+                  phone: reqPhone,
+                  notes: reqNotes,
+                  submittedAt: new Date().toISOString(),
+                },
+                status: 'New',
+                priority: 'Medium',
+                notes: `Technical document request from Resources Page for ${reqDocType}. Dispatch verified PDF bundle and instructions.`,
+              });
+
+              setReqTrackingId(saved.id);
+              setReqSubmitted(true);
+              showNotice(`Requisition ${saved.id} submitted! Logged in Admin Governance under Resources.`);
+            }}
+            className="space-y-4"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Your Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Sanjay Deshmukh"
+                  value={reqName}
+                  onChange={(e) => setReqName(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Official or University Email *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="sanjay.d@siliconcore.in"
+                  value={reqEmail}
+                  onChange={(e) => setReqEmail(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Organization / College</label>
+                <input
+                  type="text"
+                  placeholder="e.g. SiliconCore Technologies"
+                  value={reqOrg}
+                  onChange={(e) => setReqOrg(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="+91 98220 55119"
+                  value={reqPhone}
+                  onChange={(e) => setReqPhone(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Requested Whitepaper / Setup Manual *</label>
+                <select
+                  value={reqDocType}
+                  onChange={(e) => setReqDocType(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A] bg-white"
+                >
+                  <option>Synopsys PrimeTime MCMM Script Bundle & Timing Models</option>
+                  <option>AMD / Xilinx Vivado ML Enterprise Board Support Manual</option>
+                  <option>Cadence Innovus Implementation FastStart & PDK Setup</option>
+                  <option>High-Speed Multilayer PCB Stackup & Impedance Rulebook</option>
+                  <option>Silicon Carbide (SiC) 800V EV Inverter Technical Whitepaper</option>
+                  <option>RISC-V 5-Stage Pipelined SoC Architecture Verification Guide</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Intended Application & Specific Notes</label>
+              <textarea
+                rows={3}
+                placeholder="Mention tool version (e.g. Innovus 21.1, PrimeTime 2024.03), Linux OS flavor, or university lab requirements..."
+                value={reqNotes}
+                onChange={(e) => setReqNotes(e.target.value)}
+                className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+              />
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="submit"
+                className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Submit Technical Requisition</span>
+              </button>
+            </div>
+          </form>
+        )}
       </section>
     </div>
   );

@@ -241,6 +241,28 @@ export const INITIAL_FORM_SUBMISSIONS: FormSubmission[] = [
     priority: 'Medium',
     notes: 'Mock technical interview scheduled for Saturday 3:00 PM with Senior ASIC Architect.',
     assignedStaff: 'Placement Cell',
+  },
+  {
+    id: 'SUB-2026-0792',
+    submissionDate: '2026-09-20T08:45:00.000Z',
+    pageSource: 'resources',
+    pageLabel: 'Resources & Technical Guides',
+    formTitle: 'EDA Setup Manual & Technical Whitepaper Request',
+    senderName: 'Sanjay Deshmukh',
+    senderEmail: 'sanjay.d@siliconcore.in',
+    senderPhone: '+91 98220 55119',
+    organizationOrCollege: 'SiliconCore Technologies Pvt Ltd',
+    subject: 'Request: Synopsys PrimeTime MCMM Script Bundle & Vivado Installation Manual',
+    message: 'Requesting the comprehensive script bundle for multi-corner multi-mode (MCMM) timing constraints, along with board support package installation guides for AMD Vivado 2024.',
+    formData: {
+      requestedResource: 'Synopsys PrimeTime MCMM Script Bundle',
+      edaTools: ['Synopsys PrimeTime', 'AMD Vivado ML'],
+      applicationDomain: 'VLSI Physical Design & STA',
+    },
+    status: 'Action Taken',
+    priority: 'Medium',
+    notes: 'Technical documentation bundle emailed with setup instructions.',
+    assignedStaff: 'Technical Documentation Wing',
   }
 ];
 

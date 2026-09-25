@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomeView } from './views/HomeView';
@@ -20,15 +20,49 @@ import { DynamicMenuGuideModal } from './components/DynamicMenuGuideModal';
 import { CertificateVerificationModal } from './components/CertificateVerificationModal';
 import { FloatingSupportWidgets } from './components/FloatingSupportWidgets';
 import { updatePageSEO } from './utils/seoConfig';
-import { MainNavId, UserRole, StudentRegistration, PaymentTransaction } from './types';
+import { pathToTab, getTabPath, AppNavTarget } from './utils/navigation';
+import { UserRole, StudentRegistration, PaymentTransaction } from './types';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<MainNavId | 'admin-panel' | 'admin-login' | 'registration'>('home');
+  // Initialize tab directly from the browser URL (e.g. /about-us loads the About view directly)
+  const [activeTab, setActiveTabState] = useState<AppNavTarget>(() => {
+    return pathToTab(window.location.pathname);
+  });
   const [activeRole, setActiveRole] = useState<UserRole>('public');
   const [adminUser, setAdminUser] = useState<{ name: string; email: string; role: string } | null>(null);
   const [guideModalOpen, setGuideModalOpen] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
   const [preselectedCourseId, setPreselectedCourseId] = useState<string | undefined>();
+
+  // Centralized navigation function that updates both state and URL in the address bar
+  const handleNavigate = useCallback((target: AppNavTarget, pushState = true) => {
+    setActiveTabState(target);
+    const targetPath = getTabPath(target);
+    if (pushState && window.location.pathname !== targetPath) {
+      window.history.pushState({ tab: target }, '', targetPath);
+    }
+  }, []);
+
+  // Listen to browser Back/Forward navigation buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const tabFromUrl = pathToTab(window.location.pathname);
+      setActiveTabState(tabFromUrl);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Sync initial URL if landing on normalized path (e.g. /about redirects to /about-us cleanly)
+  useEffect(() => {
+    const canonicalPath = getTabPath(activeTab);
+    if (window.location.pathname !== canonicalPath && (window.location.pathname === '/' || window.location.pathname === '/home')) {
+      // Keep root as is
+    } else if (window.location.pathname !== canonicalPath && pathToTab(window.location.pathname) === activeTab) {
+      window.history.replaceState({ tab: activeTab }, '', canonicalPath);
+    }
+  }, [activeTab]);
 
   // Scroll to top and update dynamic SEO / OpenGraph / Schema metadata upon tab changes
   useEffect(() => {
@@ -38,24 +72,24 @@ export default function App() {
 
   const handleStartRegistration = (courseId?: string) => {
     setPreselectedCourseId(courseId);
-    setActiveTab('registration');
+    handleNavigate('registration');
   };
 
   const handleRegistrationCompleted = (reg: StudentRegistration, payment: PaymentTransaction) => {
     setActiveRole('student');
-    setActiveTab('students');
+    handleNavigate('students');
   };
 
   const handleAdminLoginSuccess = (user: { name: string; email: string; role: string }) => {
     setAdminUser(user);
     setActiveRole('admin');
-    setActiveTab('admin-panel');
+    handleNavigate('admin-panel');
   };
 
   const handleAdminLogout = () => {
     setAdminUser(null);
     setActiveRole('public');
-    setActiveTab('admin-login');
+    handleNavigate('admin-login');
   };
 
   // If currently on admin-login, render the dedicated standalone responsive login screen
@@ -63,7 +97,7 @@ export default function App() {
     return (
       <AdminLoginView
         onLoginSuccess={handleAdminLoginSuccess}
-        onBackToHome={() => setActiveTab('home')}
+        onBackToHome={() => handleNavigate('home')}
       />
     );
   }
@@ -73,18 +107,18 @@ export default function App() {
       {/* Top Dynamic Navigation Bar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleNavigate}
         activeRole={activeRole}
         setActiveRole={(role) => {
           setActiveRole(role);
           if (role === 'admin' && !adminUser) {
-            setActiveTab('admin-login');
+            handleNavigate('admin-login');
           } else if (role === 'admin') {
-            setActiveTab('admin-panel');
+            handleNavigate('admin-panel');
           }
         }}
         adminSession={adminUser}
-        onAdminLoginClick={() => setActiveTab('admin-login')}
+        onAdminLoginClick={() => handleNavigate('admin-login')}
         onAdminLogout={handleAdminLogout}
         onOpenGuide={() => setGuideModalOpen(true)}
         onOpenCertificateModal={() => setCertModalOpen(true)}
@@ -95,7 +129,7 @@ export default function App() {
       <main className="flex-1">
         {activeTab === 'home' && (
           <HomeView
-            onNavigate={setActiveTab}
+            onNavigate={handleNavigate}
             onRegisterCourse={handleStartRegistration}
             onOpenGuide={() => setGuideModalOpen(true)}
             onVerifyCert={() => setCertModalOpen(true)}
@@ -104,7 +138,7 @@ export default function App() {
 
         {activeTab === 'about' && (
           <AboutView
-            onNavigate={setActiveTab}
+            onNavigate={handleNavigate}
             onRegisterCourse={() => handleStartRegistration()}
           />
         )}
@@ -112,14 +146,14 @@ export default function App() {
         {activeTab === 'industry' && (
           <IndustryView
             onRegisterTraining={handleStartRegistration}
-            onNavigate={setActiveTab}
+            onNavigate={handleNavigate}
           />
         )}
 
         {activeTab === 'technology' && (
           <TechnologyView
             onRegisterCourse={() => handleStartRegistration()}
-            onNavigate={setActiveTab}
+            onNavigate={handleNavigate}
           />
         )}
 
@@ -130,7 +164,7 @@ export default function App() {
         {activeTab === 'training' && (
           <TrainingView
             onRegisterCourse={handleStartRegistration}
-            onNavigate={setActiveTab}
+            onNavigate={handleNavigate}
           />
         )}
 
@@ -154,18 +188,18 @@ export default function App() {
         )}
 
         {activeTab === 'terms-of-service' && (
-          <TermsOfServiceView onNavigate={setActiveTab} />
+          <TermsOfServiceView onNavigate={handleNavigate} />
         )}
 
         {activeTab === 'privacy-policy' && (
-          <PrivacyPolicyView onNavigate={setActiveTab} />
+          <PrivacyPolicyView onNavigate={handleNavigate} />
         )}
 
         {activeTab === 'registration' && (
           <RegistrationView
             initialCourseId={preselectedCourseId}
             onComplete={handleRegistrationCompleted}
-            onCancel={() => setActiveTab('training')}
+            onCancel={() => handleNavigate('training')}
           />
         )}
 
@@ -174,12 +208,12 @@ export default function App() {
             <AdminView
               adminUser={adminUser}
               onLogout={handleAdminLogout}
-              onNavigateHome={() => setActiveTab('home')}
+              onNavigateHome={() => handleNavigate('home')}
             />
           ) : (
             <AdminLoginView
               onLoginSuccess={handleAdminLoginSuccess}
-              onBackToHome={() => setActiveTab('home')}
+              onBackToHome={() => handleNavigate('home')}
             />
           )
         )}
@@ -193,7 +227,7 @@ export default function App() {
         onSelectRole={(r) => {
           setActiveRole(r);
           if (r === 'admin' && !adminUser) {
-            setActiveTab('admin-login');
+            handleNavigate('admin-login');
           }
         }}
       />
@@ -206,14 +240,14 @@ export default function App() {
 
       {/* Global Floating Actions: Direct Helpline (+91 9876543210) & Virtual Chatbot */}
       <FloatingSupportWidgets
-        onNavigate={setActiveTab}
+        onNavigate={handleNavigate}
         onOpenCertificateModal={() => setCertModalOpen(true)}
         onStartRegistration={handleStartRegistration}
       />
 
       {/* Global Footer */}
       <Footer
-        onNavigate={setActiveTab}
+        onNavigate={handleNavigate}
         onOpenGuide={() => setGuideModalOpen(true)}
         onVerifyCert={() => setCertModalOpen(true)}
       />

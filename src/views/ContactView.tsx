@@ -25,7 +25,7 @@ export const ContactView: React.FC = () => {
 
   const offices = [
     {
-      city: 'Bengaluru (Corporate Headquarters & Engineering Center)',
+      city: 'Bengaluru (Corporate Headquarters & Semiconductor Engineering Center)',
       address: '#45 East Road, Malleswaram, Bangalore, Karnataka - 560003, India',
       landmark: 'Near 8th Cross Cultural Hub & Malleswaram Ground',
       phone: '+91 9876543210',
@@ -34,28 +34,6 @@ export const ContactView: React.FC = () => {
       emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
       hours: 'Mon - Fri: 9:00 AM - 7:00 PM IST | Sat: 9:30 AM - 5:30 PM IST',
       coordinates: '13.0031° N, 77.5685° E (Malleswaram)',
-    },
-    {
-      city: 'Hyderabad (Silicon Design & Staffing Center)',
-      address: 'Level 4, Cyber Gateway, HITEC City, Madhapur, Hyderabad, Telangana 500081',
-      landmark: 'Opposite Cyber Towers',
-      phone: '+91 9876543210',
-      whatsapp: '+91 9876543210',
-      whatsappUrl: 'https://wa.me/919876543210',
-      emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
-      hours: 'Mon - Fri: 9:00 AM - 6:30 PM IST | Sat: 9:30 AM - 5:30 PM IST',
-      coordinates: '17.4474° N, 78.3762° E',
-    },
-    {
-      city: 'Chennai (Hardware & PCB Engineering Center)',
-      address: 'Module 3, Tidel Park, Rajiv Gandhi Salai (OMR), Taramani, Chennai, Tamil Nadu 600113',
-      landmark: 'Tidel Park Technology Corridor',
-      phone: '+91 9876543210',
-      whatsapp: '+91 9876543210',
-      whatsappUrl: 'https://wa.me/919876543210',
-      emails: ['contact@silphortechnologies.com', 'info@silphortechnologies.com'],
-      hours: 'Mon - Fri: 9:00 AM - 6:00 PM IST | Sat: 9:30 AM - 5:30 PM IST',
-      coordinates: '12.9892° N, 80.2483° E',
     },
   ];
 

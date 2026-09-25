@@ -178,23 +178,23 @@ export const SilphorLogo: React.FC<SilphorLogoProps> = ({
   // Horizontal Navigation Bar Lockup (Ideal for responsive Navbar & Mobile Headers)
   if (variant === 'horizontal') {
     const emblemSizes = {
-      xs: 'w-7 h-7',
-      sm: 'w-8 h-8 sm:w-9 sm:h-9',
-      md: 'w-9 h-9 sm:w-11 sm:h-11',
-      lg: 'w-12 h-12 sm:w-14 sm:h-14',
-      xl: 'w-14 h-14 sm:w-16 sm:h-16',
+      xs: 'w-6 h-6 sm:w-7 sm:h-7',
+      sm: 'w-7 h-7 sm:w-8 sm:h-8',
+      md: 'w-7 h-7 sm:w-8 sm:h-8 xl:w-9 xl:h-9',
+      lg: 'w-9 h-9 sm:w-11 sm:h-11',
+      xl: 'w-12 h-12 sm:w-14 sm:h-14',
     }[size];
 
     const fontStyles = {
-      xs: { main: 'text-sm tracking-[0.16em]', sub: 'text-[8px] tracking-[0.25em]' },
-      sm: { main: 'text-base tracking-[0.18em]', sub: 'text-[9px] tracking-[0.28em]' },
-      md: { main: 'text-lg sm:text-xl tracking-[0.2em]', sub: 'text-[9px] sm:text-[10px] tracking-[0.3em]' },
-      lg: { main: 'text-xl sm:text-2xl tracking-[0.22em]', sub: 'text-[11px] sm:text-xs tracking-[0.32em]' },
-      xl: { main: 'text-2xl sm:text-3xl tracking-[0.24em]', sub: 'text-xs sm:text-sm tracking-[0.34em]' },
+      xs: { main: 'text-xs sm:text-sm tracking-[0.14em]', sub: 'text-[7px] sm:text-[7.5px] tracking-[0.22em]' },
+      sm: { main: 'text-sm sm:text-base tracking-[0.16em]', sub: 'text-[7.5px] sm:text-[8px] tracking-[0.24em]' },
+      md: { main: 'text-sm sm:text-base xl:text-lg tracking-[0.16em] xl:tracking-[0.18em]', sub: 'text-[7.5px] sm:text-[8px] xl:text-[9px] tracking-[0.24em] xl:tracking-[0.26em]' },
+      lg: { main: 'text-lg sm:text-xl tracking-[0.2em]', sub: 'text-[9.5px] sm:text-[10px] tracking-[0.28em]' },
+      xl: { main: 'text-xl sm:text-2xl tracking-[0.22em]', sub: 'text-xs tracking-[0.3em]' },
     }[size];
 
     return (
-      <div className={`inline-flex items-center gap-2.5 sm:gap-3 select-none bg-transparent ${className}`}>
+      <div className={`inline-flex items-center gap-2 sm:gap-2.5 xl:gap-3 select-none bg-transparent ${className}`}>
         {/* Vector circuit emblem */}
         <div className={`${emblemSizes} shrink-0 flex items-center justify-center bg-transparent`}>
           <EmblemSvg />
@@ -210,15 +210,15 @@ export const SilphorLogo: React.FC<SilphorLogoProps> = ({
               SILPHOR
             </span>
           </div>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-2.5 sm:w-3 h-[1.5px]" style={{ backgroundColor: tealColor }} />
+          <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+            <span className="w-2 sm:w-2.5 h-[1.5px]" style={{ backgroundColor: tealColor }} />
             <span
               className={`${fontStyles.sub} font-extrabold uppercase leading-none`}
               style={{ color: tealColor }}
             >
               TECHNOLOGIES
             </span>
-            <span className="w-2.5 sm:w-3 h-[1.5px]" style={{ backgroundColor: tealColor }} />
+            <span className="w-2 sm:w-2.5 h-[1.5px]" style={{ backgroundColor: tealColor }} />
           </div>
         </div>
       </div>
