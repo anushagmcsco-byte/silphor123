@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import silphorLogoImg from '../assets/images/silphor_logo_1790265984763.jpg';
 
 interface SilphorLogoProps {
   className?: string;
@@ -101,10 +102,17 @@ export const SilphorLogo: React.FC<SilphorLogoProps> = ({
     return (
       <div className={`relative ${sizeClasses} aspect-square ${className}`}>
         <img
-          src="/logo.jpg"
+          src={silphorLogoImg}
           alt="Silphor Technologies Official Logo"
           className="w-full h-full object-contain rounded-2xl"
-          onError={() => setImgError(true)}
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (target.src !== '/logo.jpg') {
+              target.src = '/logo.jpg';
+            } else {
+              setImgError(true);
+            }
+          }}
         />
       </div>
     );
@@ -240,10 +248,17 @@ export const SilphorLogo: React.FC<SilphorLogoProps> = ({
       {!imgError && !isDark ? (
         <div className={`w-full aspect-square max-w-[180px] rounded-xl overflow-hidden p-1.5 ${transparentBg ? 'bg-transparent' : 'bg-white shadow-xs'}`}>
           <img
-            src="/logo.jpg"
+            src={silphorLogoImg}
             alt="Silphor Technologies Official Logo"
             className="w-full h-full object-contain"
-            onError={() => setImgError(true)}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src !== '/logo.jpg') {
+                target.src = '/logo.jpg';
+              } else {
+                setImgError(true);
+              }
+            }}
           />
         </div>
       ) : (

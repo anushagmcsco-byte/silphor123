@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { MOCK_COURSES, MOCK_VENDORS } from '../data/mockDatabase';
 import { SilphorLogo } from '../components/SilphorLogo';
+import heroCleanroomImg from '../assets/images/hero_semiconductor_cleanroom_1790264810712.jpg';
+import engineeringLabImg from '../assets/images/engineering_lab_training_1790264847036.jpg';
 
 interface HomeViewProps {
   onNavigate: (tab: any) => void;
@@ -133,9 +135,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-2xl overflow-hidden border-2 border-[#00828A]/40 shadow-2xl bg-slate-900 group">
                 <img
-                  src="/src/assets/images/hero_semiconductor_cleanroom_1790264810712.jpg"
+                  src={heroCleanroomImg}
                   alt="Silphor Semiconductor Cleanroom and Industrial Testing Facility"
                   className="w-full h-80 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-105"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== '/images/hero_semiconductor_cleanroom_1790264810712.jpg') {
+                      target.src = '/images/hero_semiconductor_cleanroom_1790264810712.jpg';
+                    }
+                  }}
+                  loading="eager"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#07172B] via-transparent to-transparent opacity-80" />
@@ -380,9 +389,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="lg:col-span-5 order-2 lg:order-1">
             <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
               <img
-                src="/src/assets/images/engineering_lab_training_1790264847036.jpg"
+                src={engineeringLabImg}
                 alt="Silphor Electronics & VLSI Training Lab"
                 className="w-full h-80 object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== '/images/engineering_lab_training_1790264847036.jpg') {
+                    target.src = '/images/engineering_lab_training_1790264847036.jpg';
+                  }
+                }}
+                loading="lazy"
                 referrerPolicy="no-referrer"
               />
             </div>
