@@ -34,7 +34,6 @@ interface RoleLoginViewProps {
   onLoginSuccess: (userData: { name: string; email: string; role: UserRole }) => void;
   onBackToHome: () => void;
   initialUsername?: string;
-  initialPassword?: string;
 }
 
 export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
@@ -42,7 +41,6 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
   onLoginSuccess,
   onBackToHome,
   initialUsername = '',
-  initialPassword = ''
 }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>(initialRole === 'public' ? 'student' : initialRole);
   const [activeTab, setActiveTab] = useState<'login' | 'forgot' | 'change'>('login');
@@ -71,13 +69,13 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showChangePassword, setShowChangePassword] = useState(false);
 
-  // Sync initial values or presets when role changes
+  // Populate the username only; passwords must be entered manually.
   useEffect(() => {
     setErrorMessage('');
     setSuccessMessage('');
-    if (initialUsername && initialPassword) {
+    setPassword('');
+    if (initialUsername) {
       setEmail(initialUsername);
-      setPassword(initialPassword);
       return;
     }
 
@@ -85,9 +83,8 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
     const roleAccount = accounts.find((a) => a.role === selectedRole);
     if (roleAccount) {
       setEmail(roleAccount.email);
-      setPassword(roleAccount.password);
     }
-  }, [selectedRole, initialUsername, initialPassword]);
+  }, [selectedRole, initialUsername]);
 
   // Role Configuration definitions
   const roleConfig = {
@@ -221,7 +218,7 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
     }
 
     setEmail(forgotEmail);
-    setPassword(forgotNewPassword);
+    setPassword('');
     setActiveTab('login');
     setForgotStep('request');
     setSuccessMessage(res.message);
@@ -255,7 +252,7 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
     }
 
     setEmail(changeEmail);
-    setPassword(newPassword);
+    setPassword('');
     setActiveTab('login');
     setSuccessMessage('Password changed successfully! You can now log in with your updated password.');
   };
@@ -433,7 +430,7 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
                         <Sparkles className="w-3 h-3 text-[#00828A]" />
                         <span>Demo {selectedRole.toUpperCase()} Account</span>
                       </span>
-                      <span className="text-[10px] text-slate-400">Click to fill</span>
+                      <span className="text-[10px] text-slate-400">Select account; enter password</span>
                     </div>
                     {currentRoleConfig.demoAccounts.map((acc) => (
                       <button
@@ -441,7 +438,7 @@ export const RoleLoginView: React.FC<RoleLoginViewProps> = ({
                         type="button"
                         onClick={() => {
                           setEmail(acc.email);
-                          setPassword(acc.pass);
+                          setPassword('');
                           setErrorMessage('');
                         }}
                         className={`w-full text-left p-2 rounded-xl border text-xs transition-all flex items-center justify-between cursor-pointer ${
