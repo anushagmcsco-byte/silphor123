@@ -19,6 +19,7 @@ export const ProjectsInternshipView: React.FC = () => {
   const [internCollege, setInternCollege] = useState('');
   const [internDomain, setInternDomain] = useState('VLSI Physical Design & STA');
   const [internDuration, setInternDuration] = useState('6 Months (Full-Time Tape-Out)');
+  const [internshipCategory, setInternshipCategory] = useState<'paid' | 'unpaid'>('paid');
   const [submitted, setSubmitted] = useState(false);
   const [internTrackingId, setInternTrackingId] = useState('');
 
@@ -65,6 +66,7 @@ export const ProjectsInternshipView: React.FC = () => {
         internCollege,
         internDomain,
         internDuration,
+        internshipCategory,
         submittedAt: new Date().toISOString(),
       },
       status: 'New',
@@ -144,6 +146,18 @@ export const ProjectsInternshipView: React.FC = () => {
           <p className="text-xs text-slate-600 mt-1">
             Applications are accepted from B.E / B.Tech / M.Tech / M.S students in ECE, EEE, and Microelectronics.
           </p>
+          <div className="flex flex-wrap gap-2 mt-3">
+            {(['paid', 'unpaid'] as const).map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setInternshipCategory(category)}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-bold capitalize transition-colors ${internshipCategory === category ? 'bg-[#00828A] text-white border-[#00828A]' : 'bg-white text-slate-600 border-slate-300 hover:border-[#00828A]'}`}
+              >
+                {category} Internship
+              </button>
+            ))}
+          </div>
         </div>
 
         {submitted ? (
@@ -227,6 +241,18 @@ export const ProjectsInternshipView: React.FC = () => {
                   <option>6 Months (Full-Time Tape-Out Project)</option>
                   <option>3 Months (Summer Intensive Project)</option>
                   <option>2 Months (Winter FastTrack)</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Internship Category</label>
+                <select
+                  value={internshipCategory}
+                  onChange={(e) => setInternshipCategory(e.target.value as 'paid' | 'unpaid')}
+                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg bg-white focus:outline-hidden focus:ring-2 focus:ring-[#00828A]"
+                >
+                  <option value="paid">Paid Internship</option>
+                  <option value="unpaid">Unpaid Internship</option>
                 </select>
               </div>
             </div>

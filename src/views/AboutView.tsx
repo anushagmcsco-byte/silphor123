@@ -163,28 +163,65 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onRegisterCour
       </section>
 
       {/* SECTION 2: VISION & MISSION */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden">
-          <div className="w-12 h-12 rounded-xl bg-teal-50 text-[#00828A] flex items-center justify-center mb-4">
-            <Compass className="w-6 h-6" />
+      <section className="space-y-8">
+        <div className="p-8 md:p-10 rounded-2xl bg-white border border-slate-200 shadow-xs">
+          <div className="max-w-3xl">
+            <div className="w-12 h-12 rounded-xl bg-sky-50 text-[#0B2545] flex items-center justify-center mb-4">
+              <Target className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[#0B2545] font-display mb-2">Our Mission</h2>
+            <p className="text-sm font-bold text-[#00828A] mb-2">Innovate. Engineer. Enable. Educate.</p>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              We accelerate semiconductor and electronics innovation through advanced technology solutions, specialized engineering consultancy, global distribution and sales partnerships, and industry-aligned technical education.
+            </p>
           </div>
-          <h2 className="text-xl font-bold text-[#0B2545] font-display mb-3">
-            Our Vision
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            To be the premier global ecosystem partner for semiconductor innovation, electronic design automation, and skilled engineering human capital, enabling seamless technology adoption and creating an industry-ready workforce for the next generation of silicon advancements.
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5 mt-8 pt-6 border-t border-slate-100">
+            <div>
+              <span className="text-xs font-mono font-bold text-[#00828A]">01</span>
+              <h3 className="text-sm font-bold text-[#0B2545] mt-1">Global Distribution & Sales</h3>
+              <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                Connect semiconductor, EDA, FPGA, embedded, software, and hardware technology providers with customers across industry and academia through market access, technical sales, consulting, and channel development.
+              </p>
+            </div>
+            <div>
+              <span className="text-xs font-mono font-bold text-[#00828A]">02</span>
+              <h3 className="text-sm font-bold text-[#0B2545] mt-1">Engineering & Consultancy</h3>
+              <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                Support VLSI, analog and digital design, AMS, verification, DFT, FPGA, RTL, embedded systems, sensors, and semiconductor product development with robust, production-oriented solutions.
+              </p>
+            </div>
+            <div>
+              <span className="text-xs font-mono font-bold text-[#00828A]">03</span>
+              <h3 className="text-sm font-bold text-[#0B2545] mt-1">VLSI & Technology Education</h3>
+              <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                Build practical expertise through industry-oriented programs in analog and digital IC design, verification, DFT, FPGA, RTL, and embedded systems.
+              </p>
+            </div>
+            <div>
+              <span className="text-xs font-mono font-bold text-[#00828A]">04</span>
+              <h3 className="text-sm font-bold text-[#0B2545] mt-1">Industry–Academia Enablement</h3>
+              <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                Partner with universities and engineering colleges on VLSI, FPGA, and embedded labs, training, workshops, faculty development, certification, and student projects.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-500 leading-relaxed mt-6 pt-4 border-t border-slate-100">
+            <strong className="text-slate-700">Technology focus:</strong> Chip Design, AI Chips, Power Semiconductors, Fabless Semiconductor, Sensors, Embedded Systems, FPGA, EDA, Semiconductor Software, and Electronic Hardware.
           </p>
         </div>
 
-        <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden">
-          <div className="w-12 h-12 rounded-xl bg-sky-50 text-[#0B2545] flex items-center justify-center mb-4">
-            <Target className="w-6 h-6" />
+        <div className="p-8 md:p-10 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden">
+          <div className="w-12 h-12 rounded-xl bg-teal-50 text-[#00828A] flex items-center justify-center mb-4">
+            <Compass className="w-6 h-6" />
           </div>
-          <h2 className="text-xl font-bold text-[#0B2545] font-display mb-3">
-            Our Mission
-          </h2>
+          <h2 className="text-xl font-bold text-[#0B2545] font-display mb-3">Our Vision</h2>
+          <p className="text-sm font-bold text-[#00828A] mb-3">
+            Technology That Reaches Further. Engineering That Delivers. Talent That Transforms.
+          </p>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            To provide robust technical bridges between global technology vendors and local enterprise requirements; to deliver rigorous, project-grounded training in VLSI, RTL, PCB, and Embedded systems; and to supply highly competent engineering resources that accelerate client product delivery.
+            At Silphor Technologies Private Limited, we believe semiconductor innovation is strongest when technology, engineering, business, and talent come together. We are building a global ecosystem that connects technology providers, semiconductor companies, engineering organizations, universities, and emerging talent—enabling ideas to move from concept to design, design to silicon, and silicon to market.
           </p>
         </div>
       </section>

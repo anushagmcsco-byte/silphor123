@@ -1,6 +1,14 @@
 import { MainNavId } from '../types';
 
-export type AppNavTarget = MainNavId | 'admin-panel' | 'admin-login' | 'registration';
+export type AppNavTarget = 
+  | MainNavId 
+  | 'admin-panel' 
+  | 'admin-login' 
+  | 'student-login' 
+  | 'trainer-login' 
+  | 'enterprise-login' 
+  | 'login' 
+  | 'registration';
 
 export const TAB_TO_PATH: Record<AppNavTarget, string> = {
   'home': '/',
@@ -16,6 +24,10 @@ export const TAB_TO_PATH: Record<AppNavTarget, string> = {
   'registration': '/registration',
   'admin-panel': '/admin-panel',
   'admin-login': '/admin-login',
+  'student-login': '/student-login',
+  'trainer-login': '/trainer-login',
+  'enterprise-login': '/enterprise-login',
+  'login': '/login',
   'terms-of-service': '/terms-of-service',
   'privacy-policy': '/privacy-policy',
 };
@@ -112,10 +124,28 @@ export function pathToTab(pathname: string): AppNavTarget {
       return 'admin-panel';
 
     case '/admin-login':
-    case '/login':
     case '/admin/login':
-    case '/signin':
       return 'admin-login';
+
+    case '/student-login':
+    case '/student/login':
+    case '/lms-login':
+      return 'student-login';
+
+    case '/trainer-login':
+    case '/trainer/login':
+    case '/faculty-login':
+      return 'trainer-login';
+
+    case '/enterprise-login':
+    case '/partner-login':
+    case '/corporate-login':
+      return 'enterprise-login';
+
+    case '/login':
+    case '/signin':
+    case '/auth':
+      return 'login';
 
     case '/terms':
     case '/terms-of-service':

@@ -25,6 +25,7 @@ interface HomeViewProps {
   onRegisterCourse: (courseId?: string) => void;
   onOpenGuide: () => void;
   onVerifyCert: () => void;
+  canOpenGuide?: boolean;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -32,6 +33,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onRegisterCourse,
   onOpenGuide,
   onVerifyCert,
+  canOpenGuide = false,
 }) => {
   return (
     <div className="space-y-16 pb-16">
@@ -92,13 +94,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button
+                {canOpenGuide && <button
                   onClick={() => onRegisterCourse()}
                   className="px-6 py-3.5 bg-[#00828A] hover:bg-[#007077] text-white text-sm font-bold rounded-xl shadow-lg shadow-teal-500/25 transition-all flex items-center gap-2 group"
                 >
                   <span>Explore Courses & Register</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </button>}
                 <button
                   onClick={() => onNavigate('industry')}
                   className="px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-white text-sm font-semibold rounded-xl border border-slate-700 transition-colors flex items-center gap-2"

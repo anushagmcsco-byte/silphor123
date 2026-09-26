@@ -17,9 +17,10 @@ interface FooterProps {
   onNavigate: (tab: any) => void;
   onOpenGuide: () => void;
   onVerifyCert: () => void;
+  canOpenGuide?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerifyCert }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerifyCert, canOpenGuide = false }) => {
   return (
     <footer className="bg-[#07172B] text-slate-300 border-t border-slate-800 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
@@ -43,20 +44,20 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
-              <button
+              {canOpenGuide && <button
                 onClick={onOpenGuide}
                 className="px-3 py-1.5 rounded-lg bg-[#00828A]/20 hover:bg-[#00828A]/30 border border-[#00828A]/40 text-[#38BDF8] text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Code2 className="w-3.5 h-3.5" />
                 <span>Backend Menu Architecture</span>
-              </button>
-              <button
+              </button>}
+              {canOpenGuide && <button
                 onClick={onVerifyCert}
                 className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Award className="w-3.5 h-3.5 text-[#00828A]" />
                 <span>Verify Credentials</span>
-              </button>
+              </button>}
               <a
                 href="/admin-login"
                 onClick={(e) => {

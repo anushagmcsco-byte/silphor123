@@ -118,8 +118,8 @@ export const EngineeringServicesView: React.FC = () => {
             skills: ['Design Compiler', 'PrimeTime', 'Innovus', 'SystemVerilog/UVM'],
           },
           {
-            title: 'Testing & Post-Silicon Engineers',
-            desc: 'Automated test equipment (ATE), boundary scan, JTAG, wafer-level testing, and characterization across PVT corners.',
+            title: 'Application & Testing Engineers',
+            desc: 'Application bring-up, automated test equipment (ATE), boundary scan, JTAG, wafer-level testing, and characterization across PVT corners.',
             skills: ['ATE Platforms', 'Python Test Scripting', 'Logic Analyzers', 'Failure Analysis'],
           },
         ].map((res, i) => (
