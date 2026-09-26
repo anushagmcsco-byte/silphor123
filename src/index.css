@@ -22,6 +22,42 @@
   }
 }
 
+@layer components {
+  :is(div, section, article, aside)[class*="rounded"][class*="border"] {
+    border-color: color-mix(in srgb, var(--brand-teal) 38%, white);
+    animation: card-reveal 500ms both;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  :is(div, section, article, aside)[class*="rounded"][class*="border"]:hover {
+    border-color: var(--brand-teal);
+    box-shadow: 0 10px 24px rgba(11, 37, 69, 0.08);
+    transform: translateY(-2px);
+  }
+
+  @keyframes card-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media print {
   body {
     background: white !important;

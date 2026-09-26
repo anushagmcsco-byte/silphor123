@@ -180,6 +180,38 @@ export const SEO_CONFIG: Record<string, PageSEOMetadata> = {
     canonicalPath: '/admin-login',
     ogType: 'website',
   },
+  'student-login': {
+    title: 'Student LMS Portal Login | Silphor Technologies',
+    description: 'Student access to EDA virtual workstations, assignments, course lecture slides, and placement cell.',
+    keywords: 'Student login, LMS portal, VLSI training Bangalore, Silphor student portal',
+    ogImage: '/og/og-students.png',
+    canonicalPath: '/student-login',
+    ogType: 'website',
+  },
+  'trainer-login': {
+    title: 'Faculty & Trainer Console Login | Silphor Technologies',
+    description: 'Instructor console for syllabus management, batch schedules, assignment scoring, and lab evaluations.',
+    keywords: 'Trainer login, faculty portal, instructor console, Silphor trainers',
+    ogImage: '/og/og-training.png',
+    canonicalPath: '/trainer-login',
+    ogType: 'website',
+  },
+  'enterprise-login': {
+    title: 'Enterprise Partner Portal Login | Silphor Technologies',
+    description: 'Enterprise access for EDA software channel distribution, deputation requisition, and corporate hiring.',
+    keywords: 'Enterprise login, corporate partner, EDA software distributor, engineering staffing',
+    ogImage: '/og/og-industry.png',
+    canonicalPath: '/enterprise-login',
+    ogType: 'website',
+  },
+  'login': {
+    title: 'Multi-Role Authentication Portal | Silphor Technologies',
+    description: 'Unified single sign-on access for students, trainers, system administrators, and corporate enterprise partners.',
+    keywords: 'Login, student login, trainer login, admin console, Silphor login',
+    ogImage: '/og-feature.png',
+    canonicalPath: '/login',
+    ogType: 'website',
+  },
 };
 
 /**

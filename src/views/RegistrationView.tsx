@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Check, 
   ArrowRight, 
@@ -15,25 +15,64 @@ import {
   AlertCircle,
   HelpCircle,
   Clock,
-  Send
+  Send,
+  GraduationCap,
+  Users,
+  Copy,
+  KeyRound,
+  ExternalLink,
+  Briefcase
 } from 'lucide-react';
 import { Course, StudentRegistration, PaymentTransaction } from '../types';
 import { MOCK_COURSES } from '../data/mockDatabase';
 import { SilphorLogo } from '../components/SilphorLogo';
 import { saveFormSubmission } from '../utils/formStorage';
+import { sendRegistrationEmail } from '../utils/emailDelivery';
+import { openRazorpayPayment, verifyRazorpayPayment } from '../utils/paymentService';
+import {
+  completeRegistrationEmailLink,
+  hasRegistrationEmailLink,
+  sendRegistrationEmailLink,
+} from '../utils/firebaseAuth';
+import { 
+  dispatchStudentRegistrationEmail, 
+  dispatchTrainerRegistrationEmail 
+} from '../utils/emailService';
 
 interface RegistrationViewProps {
   initialCourseId?: string;
   onComplete: (reg: StudentRegistration, payment: PaymentTransaction) => void;
   onCancel: () => void;
+  onGoToRoleLogin?: (role: string, username?: string, password?: string) => void;
 }
 
 export const RegistrationView: React.FC<RegistrationViewProps> = ({
   initialCourseId,
   onComplete,
   onCancel,
+  onGoToRoleLogin,
 }) => {
+  // Registration Type: Student Course Enrollment vs Industry Trainer Onboarding
+  const [registrationType, setRegistrationType] = useState<'student' | 'trainer'>('student');
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+
+  // Student credentials generated upon registration
+  const [studentCreds, setStudentCreds] = useState<{ username: string; password: string } | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Trainer Registration Form State
+  const [trainerName, setTrainerName] = useState('Dr. Rajesh Varma');
+  const [trainerEmail, setTrainerEmail] = useState('rajesh.varma@cadence-alumni.com');
+  const [trainerPhone, setTrainerPhone] = useState('+91 98451 98765');
+  const [trainerDomain, setTrainerDomain] = useState('VLSI Physical Design & Cadence Innovus Flow');
+  const [trainerExperience, setTrainerExperience] = useState('12+ Years (Lead / Staff Physical Design Engineer)');
+  const [trainerOrg, setTrainerOrg] = useState('Cadence Design Systems / Ex-Qualcomm');
+  const [trainerDegree, setTrainerDegree] = useState('M.Tech / MS in Microelectronics & VLSI');
+  const [trainerMode, setTrainerMode] = useState('Weekend Hybrid Masterclasses');
+  const [trainerBio, setTrainerBio] = useState('Expertise in 7nm FinFET physical synthesis, CTS skew optimization, and signoff timing closure.');
+  const [trainerSubmitted, setTrainerSubmitted] = useState(false);
+  const [trainerCreds, setTrainerCreds] = useState<{ username: string; password: string; facultyId: string } | null>(null);
+  const [trainerSubmitting, setTrainerSubmitting] = useState(false);
 
   // Step 1: Course & Batch Selection
   const [selectedCourseId, setSelectedCourseId] = useState<string>(
@@ -53,9 +92,11 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
   const [graduationYear, setGraduationYear] = useState('2025');
 
   // Step 3: Verification & Document Upload
-  const [otp, setOtp] = useState('8492');
-  const [otpSent, setOtpSent] = useState(true);
-  const [otpVerified, setOtpVerified] = useState(true);
+  const [emailLinkRecipient, setEmailLinkRecipient] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([
     'BTech_Provisional_Degree.pdf',
     'Aadhaar_National_ID.pdf'
@@ -66,13 +107,28 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
   const [promoCode, setPromoCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [promoMessage, setPromoMessage] = useState('');
-  const [selectedGateway, setSelectedGateway] = useState<'Razorpay' | 'Cashfree' | 'PayU' | 'PhonePe'>('Razorpay');
+  const selectedGateway = 'Razorpay' as const;
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState(false);
 
   // Final Output
   const [finalRegistration, setFinalRegistration] = useState<StudentRegistration | null>(null);
   const [finalPayment, setFinalPayment] = useState<PaymentTransaction | null>(null);
+  const [emailDeliveryError, setEmailDeliveryError] = useState('');
+
+  useEffect(() => {
+    if (!hasRegistrationEmailLink()) return;
+
+    completeRegistrationEmailLink()
+      .then((verifiedEmail) => {
+        setEmailLinkRecipient(verifiedEmail);
+        setOtpVerified(true);
+        setOtpError('');
+      })
+      .catch((error) => {
+        setOtpError(error instanceof Error ? error.message : 'Unable to verify the Firebase email link.');
+      });
+  }, []);
 
   const baseFee = selectedCourse.fee;
   const initialPayAmount = paymentOption === 'full' ? baseFee - discountAmount : Math.round(baseFee / 2);
@@ -90,15 +146,46 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
     }
   };
 
-  const handleExecutePayment = () => {
+  const handleSendOtp = async () => {
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setOtpError('Enter a valid student email address before requesting verification.');
+      return false;
+    }
+
+    setOtpSending(true);
+    setOtpError('');
+
+    try {
+      await sendRegistrationEmailLink(email.trim());
+      setEmailLinkRecipient(email.trim());
+      setOtpSent(true);
+      setOtpVerified(false);
+      return true;
+    } catch (error) {
+      setOtpSent(false);
+      setOtpError(error instanceof Error ? error.message : 'Unable to send the Firebase verification link.');
+      return false;
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const handleExecutePayment = async () => {
     setPaymentProcessing(true);
     setPaymentError(false);
 
-    setTimeout(() => {
-      setPaymentProcessing(false);
+    try {
       const appNum = `SIL-2026-REG-${Math.floor(1000 + Math.random() * 9000)}`;
-      const txnId = `TXN-${selectedGateway.substring(0, 3).toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
       const invNo = `INV-SIL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      const paymentResponse = await openRazorpayPayment({
+        amount: initialPayAmount,
+        receipt: appNum,
+        name: fullName,
+        email,
+        phone: mobile,
+        description: selectedCourse.title,
+      });
+      await verifyRazorpayPayment(paymentResponse);
 
       const newRegistration: StudentRegistration = {
         id: `reg-${Date.now()}`,
@@ -122,7 +209,7 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
 
       const newPayment: PaymentTransaction = {
         id: `pay-${Date.now()}`,
-        transactionId: txnId,
+        transactionId: paymentResponse.razorpay_payment_id,
         applicationNumber: appNum,
         studentName: fullName,
         courseTitle: selectedCourse.title,
@@ -162,7 +249,7 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
           initialPayAmount,
           totalFee: baseFee - discountAmount,
           paymentStatus: paymentOption === 'full' ? 'Paid' : 'Partial',
-          transactionId: txnId,
+          transactionId: paymentResponse.razorpay_payment_id,
           gateway: selectedGateway,
           documentsUploaded: uploadedFiles,
           submittedAt: new Date().toISOString(),
@@ -172,9 +259,89 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
         notes: `Admissions application verified with OTP. Advance ₹${initialPayAmount} confirmed via ${selectedGateway}.`,
       });
 
-      onComplete(newRegistration, newPayment);
+      // Credentials are dispatched only after the payment is confirmed successful.
+      const batchObj = selectedCourse.upcomingBatches.find(b => b.id === selectedBatchId);
+      const batchName = batchObj?.name || 'Standard Batch';
+
+      const { username, password, emailPayload } = dispatchStudentRegistrationEmail({
+        fullName,
+        email,
+        courseTitle: selectedCourse.title,
+        batchName,
+        applicationNumber: appNum,
+        amountPaid: initialPayAmount,
+        totalFee: baseFee - discountAmount,
+      });
+
+      setEmailDeliveryError('');
+      try {
+        await sendRegistrationEmail(emailPayload);
+      } catch (error) {
+        console.error('Student registration email failed:', error);
+        setEmailDeliveryError(error instanceof Error ? error.message : 'The student email could not be sent.');
+      }
+
+      setStudentCreds({ username, password });
       setStep(5);
-    }, 1500);
+    } catch (error) {
+      setPaymentError(true);
+      console.error('Payment failed:', error);
+    } finally {
+      setPaymentProcessing(false);
+    }
+  };
+
+  const handleTrainerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setTrainerSubmitting(true);
+
+    setTimeout(() => {
+      setTrainerSubmitting(false);
+      const { username, password, emailPayload } = dispatchTrainerRegistrationEmail({
+        fullName: trainerName,
+        email: trainerEmail,
+        phone: trainerPhone,
+        domain: trainerDomain,
+        experienceYears: trainerExperience,
+        organization: trainerOrg,
+      });
+
+      const facultyId = (emailPayload.metadata?.facultyId as string) || `SIL-FAC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      setTrainerCreds({ username, password, facultyId });
+      setTrainerSubmitted(true);
+
+      saveFormSubmission({
+        id: facultyId,
+        pageSource: 'registration',
+        pageLabel: 'Faculty & Trainer Onboarding',
+        formTitle: 'Industry Trainer Registration Application',
+        senderName: trainerName,
+        senderEmail: trainerEmail,
+        senderPhone: trainerPhone,
+        organizationOrCollege: trainerOrg,
+        subject: `Trainer Application: ${trainerName} - ${trainerDomain}`,
+        message: `Trainer registered for domain: ${trainerDomain}. Experience: ${trainerExperience}. Affiliation: ${trainerOrg}. Teaching mode: ${trainerMode}.`,
+        formData: {
+          facultyId,
+          domain: trainerDomain,
+          experience: trainerExperience,
+          organization: trainerOrg,
+          degree: trainerDegree,
+          teachingMode: trainerMode,
+          bio: trainerBio,
+          submittedAt: new Date().toISOString()
+        },
+        status: 'In Review',
+        priority: 'High',
+        notes: `Faculty onboarding registered. Credentials dispatched via email to ${trainerEmail}.`
+      });
+    }, 1200);
+  };
+
+  const handleCopyText = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   return (
@@ -185,56 +352,359 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-[#38BDF8] uppercase tracking-wider mb-1">
               <Sparkles className="w-3.5 h-3.5 text-[#00828A]" />
-              <span>Official Academic Admissions Portal</span>
+              <span>Official Academic & Faculty Directorate</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight font-display text-white">
-              Online Student Registration & Course Enrollment
+              {registrationType === 'student'
+                ? 'Online Student Registration & Course Enrollment'
+                : 'Industry Trainer & Faculty Onboarding'}
             </h1>
             <p className="text-xs md:text-sm text-slate-300 mt-1 max-w-2xl">
-              Apply for tier-1 industrial semiconductor and VLSI engineering training with instant multi-gateway checkout.
+              {registrationType === 'student'
+                ? 'Apply for tier-1 industrial semiconductor and VLSI engineering training with instant automated credentials delivery.'
+                : 'Join our faculty roster to mentor emerging chip designers, conduct tapeout workshops, and deliver corporate bootcamps.'}
             </p>
           </div>
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 rounded-lg border border-slate-700"
+            className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 rounded-lg border border-slate-700 cursor-pointer"
           >
             Back to Catalog
           </button>
         </div>
 
-        {/* Step Indicator */}
-        <div className="grid grid-cols-5 gap-2 mt-8 pt-6 border-t border-slate-700/60">
-          {[
-            { num: 1, label: 'Course' },
-            { num: 2, label: 'Profile' },
-            { num: 3, label: 'Docs & OTP' },
-            { num: 4, label: 'Payment' },
-            { num: 5, label: 'Receipt' },
-          ].map((s) => (
-            <div key={s.num} className="text-center">
-              <div
-                className={`w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  step === s.num
-                    ? 'bg-[#00828A] text-white ring-4 ring-teal-500/20'
-                    : step > s.num
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-slate-800 text-slate-400'
-                }`}
-              >
-                {step > s.num ? <Check className="w-3.5 h-3.5" /> : s.num}
-              </div>
-              <span className="text-[11px] font-medium text-slate-300 block mt-1">
-                {s.label}
-              </span>
-            </div>
-          ))}
+        {/* Role Mode Switcher: Student vs Trainer */}
+        <div className="flex bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 mt-6 max-w-md">
+          <button
+            type="button"
+            onClick={() => setRegistrationType('student')}
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              registrationType === 'student'
+                ? 'bg-[#00828A] text-white shadow-xs'
+                : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4" />
+            <span>Student Enrollment</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRegistrationType('trainer')}
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              registrationType === 'trainer'
+                ? 'bg-[#00828A] text-white shadow-xs'
+                : 'text-slate-300 hover:text-white'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Trainer / Faculty Registration</span>
+          </button>
         </div>
+
+        {/* Student Step Indicator (Only when student mode) */}
+        {registrationType === 'student' && (
+          <div className="grid grid-cols-5 gap-2 mt-6 pt-6 border-t border-slate-700/60">
+            {[
+              { num: 1, label: 'Course' },
+              { num: 2, label: 'Profile' },
+              { num: 3, label: 'Docs & Email' },
+              { num: 4, label: 'Payment' },
+              { num: 5, label: 'Receipt' },
+            ].map((s) => (
+              <div key={s.num} className="text-center">
+                <div
+                  className={`w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    step === s.num
+                      ? 'bg-[#00828A] text-white ring-4 ring-teal-500/20'
+                      : step > s.num
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  {step > s.num ? <Check className="w-3.5 h-3.5" /> : s.num}
+                </div>
+                <span className="text-[11px] font-medium text-slate-300 block mt-1">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Main Multi-Step Container */}
+      {/* Main Container */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
-        {/* STEP 1: COURSE & BATCH SELECTION */}
-        {step === 1 && (
+        {/* ===================== TRAINER REGISTRATION FLOW ===================== */}
+        {registrationType === 'trainer' && (
+          <div>
+            {!trainerSubmitted ? (
+              <form onSubmit={handleTrainerSubmit} className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-bold text-[#0B2545] flex items-center gap-2">
+                    <Users className="w-5 h-5 text-[#00828A]" />
+                    <span>Industry Trainer & Faculty Onboarding Application</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Upon submission, your faculty profile will be registered and an automated credentials email with your username and initial password will be sent to your inbox.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Full Name */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Full Legal Name & Title
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={trainerName}
+                      onChange={(e) => setTrainerName(e.target.value)}
+                      placeholder="e.g. Dr. Rajesh Varma / Prof. Anita Sen"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Professional Email Address (Credentials will be sent here)
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={trainerEmail}
+                      onChange={(e) => setTrainerEmail(e.target.value)}
+                      placeholder="e.g. rajesh.varma@cadence.com"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Contact / WhatsApp Number
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={trainerPhone}
+                      onChange={(e) => setTrainerPhone(e.target.value)}
+                      placeholder="+91 98451 98765"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  {/* Specialization Domain */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Instruction Domain / Primary Subject
+                    </label>
+                    <select
+                      value={trainerDomain}
+                      onChange={(e) => setTrainerDomain(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A] bg-white"
+                    >
+                      <option value="VLSI Physical Design & Cadence Innovus Flow">VLSI Physical Design & Innovus Flow</option>
+                      <option value="RTL Design, Verilog & UVM Verification">RTL Design, Verilog & UVM Verification</option>
+                      <option value="Semiconductor Fabrication, Cleanroom & PDKs">Semiconductor Fabrication & PDKs</option>
+                      <option value="High-Speed Multi-Layer PCB Design">High-Speed Multi-Layer PCB Design</option>
+                      <option value="Embedded Systems, RTOS & ARM Cortex">Embedded Systems, RTOS & ARM Cortex</option>
+                      <option value="Power Electronics, GaN/SiC Inverters">Power Electronics, GaN/SiC Inverters</option>
+                    </select>
+                  </div>
+
+                  {/* Years of Experience */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Industry / Academic Experience
+                    </label>
+                    <select
+                      value={trainerExperience}
+                      onChange={(e) => setTrainerExperience(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A] bg-white"
+                    >
+                      <option value="3-5 Years (Senior Engineer)">3-5 Years (Senior Engineer)</option>
+                      <option value="5-8 Years (Lead Design Engineer)">5-8 Years (Lead Design Engineer)</option>
+                      <option value="8-12 Years (Staff Engineer / Architect)">8-12 Years (Staff Engineer / Architect)</option>
+                      <option value="12+ Years (Lead / Staff Physical Design Engineer)">12+ Years (Principal / Fellow)</option>
+                      <option value="Academic Professor (10+ Yrs Ph.D)">Academic Professor (10+ Yrs Ph.D)</option>
+                    </select>
+                  </div>
+
+                  {/* Current Organization */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Current Company or University
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={trainerOrg}
+                      onChange={(e) => setTrainerOrg(e.target.value)}
+                      placeholder="e.g. Synopsys, Qualcomm, IISc Bengaluru"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  {/* Highest Degree */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Highest Degree
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={trainerDegree}
+                      onChange={(e) => setTrainerDegree(e.target.value)}
+                      placeholder="e.g. Ph.D / M.Tech in Microelectronics"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                    />
+                  </div>
+
+                  {/* Preferred Teaching Mode */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Preferred Mode of Engagement
+                    </label>
+                    <select
+                      value={trainerMode}
+                      onChange={(e) => setTrainerMode(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A] bg-white"
+                    >
+                      <option value="Weekend Hybrid Masterclasses">Weekend Hybrid Masterclasses</option>
+                      <option value="Online Evening Batches">Online Evening Batches</option>
+                      <option value="Full-Time Corporate Deputation Bootcamps">Full-Time Corporate Bootcamps</option>
+                      <option value="Capstone Project Mentorship Only">Capstone Project Mentorship Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Brief Profile Bio */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    Technical Bio & Semiconductor Toolchain Competence
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={trainerBio}
+                    onChange={(e) => setTrainerBio(e.target.value)}
+                    placeholder="List specific tapeout nodes (e.g. TSMC 7nm, GF 22FDX), EDA tools used (Innovus, Design Compiler, Calibre, Vivado), and prior mentoring."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#00828A]"
+                  />
+                </div>
+
+                {/* Submit button */}
+                <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                  <span className="text-xs text-slate-500">
+                    Your credentials will be generated and dispatched automatically via TLS email service.
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={trainerSubmitting}
+                    className="px-6 py-3 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {trainerSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Registering Faculty & Dispatching Mail...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Submit Trainer Registration</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* TRAINER REGISTRATION CONFIRMED */
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="p-6 rounded-2xl bg-sky-50 border border-sky-200 text-center">
+                  <div className="w-12 h-12 rounded-full bg-sky-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
+                    <Check className="w-6 h-6 stroke-[3]" />
+                  </div>
+                  <h2 className="text-xl font-extrabold text-sky-950 font-display">
+                    Trainer & Faculty Onboarding Confirmed!
+                  </h2>
+                  <p className="text-xs text-sky-800 mt-1 max-w-md mx-auto">
+                    Welcome to the Silphor Faculty Directorate. An onboarding email with your credentials has been dispatched to <strong>{trainerEmail}</strong>.
+                  </p>
+                  <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-sky-300 text-xs font-mono font-bold text-sky-900">
+                    Faculty ID: {trainerCreds?.facultyId}
+                  </div>
+                </div>
+
+                {/* Trainer Credentials Box */}
+                {trainerCreds && (
+                  <div className="p-5 rounded-2xl bg-teal-50 border-2 border-[#00828A]/40 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#00828A] uppercase tracking-wider flex items-center gap-2">
+                        <KeyRound className="w-4 h-4" />
+                        <span>Your Faculty Console Access Credentials:</span>
+                      </span>
+                      <span className="text-[10px] bg-teal-100 text-teal-800 px-2.5 py-0.5 rounded-full font-bold">
+                        Email Dispatched ✓
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div className="bg-white p-3 rounded-xl border border-teal-200 flex items-center justify-between">
+                        <div>
+                          <div className="text-[10px] font-semibold text-slate-400 uppercase">Trainer Username</div>
+                          <div className="font-mono font-bold text-xs text-slate-900">{trainerCreds.username}</div>
+                        </div>
+                        <button
+                          onClick={() => handleCopyText(trainerCreds.username, 'trn_user')}
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-[#00828A] hover:bg-teal-50 transition-colors"
+                          title="Copy Username"
+                        >
+                          {copiedField === 'trn_user' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+
+                      <div className="bg-white p-3 rounded-xl border border-teal-200 flex items-center justify-between">
+                        <div>
+                          <div className="text-[10px] font-semibold text-slate-400 uppercase">Initial Password</div>
+                          <div className="font-mono font-bold text-xs text-[#00828A]">{trainerCreds.password}</div>
+                        </div>
+                        <button
+                          onClick={() => handleCopyText(trainerCreds.password, 'trn_pass')}
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-[#00828A] hover:bg-teal-50 transition-colors"
+                          title="Copy Password"
+                        >
+                          {copiedField === 'trn_pass' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-teal-200/60">
+                      <span className="text-[11px] text-slate-500">
+                        Check your inbox for syllabus schedule and EDA lab environment allocation.
+                      </span>
+                      <button
+                        onClick={() => {
+                          if (onGoToRoleLogin) {
+                            onGoToRoleLogin('trainer', trainerCreds.username, trainerCreds.password);
+                          }
+                        }}
+                        className="px-4 py-2 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Sign In to Trainer Console</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ===================== STUDENT COURSE ENROLLMENT FLOW ===================== */}
+        {registrationType === 'student' && (
+          <div>
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-bold text-[#0B2545]">Step 1: Choose Your Specialization & Cohort</h2>
@@ -315,6 +785,7 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
               </button>
             </div>
           </div>
+          </div>
         )}
 
         {/* STEP 2: PERSONAL & ACADEMIC DETAILS */}
@@ -350,10 +821,14 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                 <label className="text-xs font-semibold text-slate-700 block mb-1">Mobile Number (with WhatsApp) *</label>
                 <input
                   type="tel"
+                  required
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00828A] focus:outline-hidden"
                 />
+                {otpError && (
+                  <p className="mt-1 text-[11px] text-rose-700 font-semibold">{otpError}</p>
+                )}
               </div>
 
               <div>
@@ -396,10 +871,15 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                 <span>Back</span>
               </button>
               <button
-                onClick={() => setStep(3)}
-                className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2"
+                onClick={() => {
+                  void handleSendOtp().then((sent) => {
+                    if (sent) setStep(3);
+                  });
+                }}
+                disabled={otpSending}
+                className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span>Continue to Verification</span>
+                <span>{otpSending ? 'Sending OTP...' : 'Continue to Verification'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -411,7 +891,7 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-bold text-[#0B2545]">Step 3: Identity Verification & Documents</h2>
-              <p className="text-xs text-slate-500">Verify your mobile/email via one-time passcode and upload supporting ID.</p>
+              <p className="text-xs text-slate-500">Verify the student email link and upload supporting ID.</p>
             </div>
 
             {/* OTP Section */}
@@ -419,26 +899,28 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-[#00828A]" />
-                  <span>One-Time Passcode (OTP) Verification</span>
+                  <span>Firebase Email-Link Verification</span>
                 </span>
-                <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Code sent to {mobile}
-                </span>
+                {otpSent ? (
+                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 text-right">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    Verification link sent to {emailLinkRecipient}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-slate-500 font-semibold">Link not sent</span>
+                )}
               </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="w-40 px-3 py-2 text-center text-sm font-mono tracking-widest font-bold border border-slate-300 rounded-lg bg-white"
-                />
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-xs text-slate-700">
+                  Open the link in your email to complete verification. This page will update automatically.
+                </span>
                 <button
-                  onClick={() => setOtpVerified(true)}
-                  className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700"
+                  type="button"
+                  onClick={() => void handleSendOtp()}
+                  disabled={otpSending}
+                  className="px-3 py-2 text-xs font-semibold text-[#00828A] hover:text-[#007077]"
                 >
-                  Verify OTP
+                  {otpSending ? 'Sending...' : 'Resend link'}
                 </button>
                 {otpVerified && (
                   <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
@@ -446,6 +928,14 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                   </span>
                 )}
               </div>
+              {otpSent && (
+                <p className="text-[11px] text-slate-500">
+                  Check {emailLinkRecipient} and click the Firebase sign-in link. Payment remains locked until verification completes.
+                </p>
+              )}
+              {otpError && (
+                <p className="text-[11px] text-rose-700 font-semibold">{otpError}</p>
+              )}
             </div>
 
             {/* Document Upload Simulation */}
@@ -480,7 +970,8 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                 <span>Back</span>
               </button>
               <button
-                onClick={() => setStep(4)}
+                onClick={() => otpVerified && setStep(4)}
+                disabled={!otpVerified}
                 className="px-6 py-2.5 bg-[#00828A] hover:bg-[#007077] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2"
               >
                 <span>Proceed to Payment</span>
@@ -580,17 +1071,11 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
                   { id: 'Razorpay', label: 'Razorpay', badge: 'Fastest UPI & Cards' },
-                  { id: 'Cashfree', label: 'Cashfree', badge: 'Net Banking & EMI' },
-                  { id: 'PayU', label: 'PayU', badge: 'Credit & Debit Cards' },
-                  { id: 'PhonePe', label: 'PhonePe', badge: 'Direct PhonePe QR' },
                 ].map((g) => (
                   <div
                     key={g.id}
-                    onClick={() => setSelectedGateway(g.id as any)}
                     className={`p-3 rounded-xl border cursor-pointer transition-all text-center ${
-                      selectedGateway === g.id
-                        ? 'border-[#00828A] bg-teal-50 text-[#0B2545] font-bold ring-2 ring-[#00828A]/20 shadow-xs'
-                        : 'border-slate-200 hover:border-slate-300'
+                      'border-[#00828A] bg-teal-50 text-[#0B2545] font-bold ring-2 ring-[#00828A]/20 shadow-xs'
                     }`}
                   >
                     <CreditCard className="w-5 h-5 mx-auto text-[#00828A] mb-1" />
@@ -599,6 +1084,9 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                   </div>
                 ))}
               </div>
+              <p className="mt-2 text-[11px] text-slate-500">
+                Secure Razorpay Checkout opens after you continue. Other gateways will be added after their merchant accounts are configured.
+              </p>
             </div>
 
             {/* Security Guarantee */}
@@ -635,6 +1123,11 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                 )}
               </button>
             </div>
+            {paymentError && (
+              <p className="text-xs text-rose-700 font-semibold text-right">
+                Payment could not be completed. Check your gateway configuration or try again.
+              </p>
+            )}
           </div>
         )}
 
@@ -649,8 +1142,17 @@ export const RegistrationView: React.FC<RegistrationViewProps> = ({
                 Registration & Admission Confirmed!
               </h2>
               <p className="text-xs text-emerald-800 mt-1">
-                Your admission file has been generated. Confirmation SMS and Email sent to {email}.
+                Your admission file has been generated. Confirmation SMS sent to {mobile}.
               </p>
+              {emailDeliveryError ? (
+                <p className="text-xs text-rose-700 font-semibold mt-2">
+                  Credentials email could not be delivered to {email}: {emailDeliveryError}
+                </p>
+              ) : (
+                <p className="text-xs text-emerald-700 font-semibold mt-2">
+                  Student username and password sent to {email}.
+                </p>
+              )}
               <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-emerald-300 text-xs font-mono font-bold text-emerald-900">
                 Application Number: {finalRegistration.applicationNumber}
               </div>

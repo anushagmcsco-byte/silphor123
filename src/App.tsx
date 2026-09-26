@@ -14,6 +14,7 @@ import { ContactView } from './views/ContactView';
 import { RegistrationView } from './views/RegistrationView';
 import { AdminView } from './views/AdminView';
 import { AdminLoginView } from './views/AdminLoginView';
+import { RoleLoginView } from './views/RoleLoginView';
 import { TermsOfServiceView } from './views/TermsOfServiceView';
 import { PrivacyPolicyView } from './views/PrivacyPolicyView';
 import { DynamicMenuGuideModal } from './components/DynamicMenuGuideModal';
@@ -86,10 +87,20 @@ export default function App() {
     handleNavigate('admin-panel');
   };
 
-  const handleAdminLogout = () => {
+  const handleLogout = () => {
     setAdminUser(null);
     setActiveRole('public');
-    handleNavigate('admin-login');
+    handleNavigate('home');
+  };
+
+  const handleRoleLoginSuccess = (user: { name: string; email: string; role: UserRole }) => {
+    setActiveRole(user.role);
+    if (user.role === 'admin') {
+      setAdminUser(user);
+      handleNavigate('admin-panel');
+      return;
+    }
+    handleNavigate(user.role === 'student' ? 'students' : 'home');
   };
 
   // If currently on admin-login, render the dedicated standalone responsive login screen
@@ -97,6 +108,24 @@ export default function App() {
     return (
       <AdminLoginView
         onLoginSuccess={handleAdminLoginSuccess}
+        onBackToHome={() => handleNavigate('home')}
+      />
+    );
+  }
+
+  if (activeTab === 'student-login' || activeTab === 'trainer-login' || activeTab === 'enterprise-login' || activeTab === 'login') {
+    const loginRole: UserRole = activeTab === 'student-login'
+      ? 'student'
+      : activeTab === 'trainer-login'
+      ? 'trainer'
+      : activeTab === 'enterprise-login'
+      ? 'enterprise'
+      : 'student';
+
+    return (
+      <RoleLoginView
+        initialRole={loginRole}
+        onLoginSuccess={handleRoleLoginSuccess}
         onBackToHome={() => handleNavigate('home')}
       />
     );
@@ -119,8 +148,10 @@ export default function App() {
         }}
         adminSession={adminUser}
         onAdminLoginClick={() => handleNavigate('admin-login')}
-        onAdminLogout={handleAdminLogout}
+        onRoleLogin={(role) => handleNavigate(`${role}-login` as AppNavTarget)}
+        onLogout={handleLogout}
         onOpenGuide={() => setGuideModalOpen(true)}
+        canOpenGuide={Boolean(adminUser)}
         onOpenCertificateModal={() => setCertModalOpen(true)}
         onStartRegistration={handleStartRegistration}
       />
@@ -132,6 +163,7 @@ export default function App() {
             onNavigate={handleNavigate}
             onRegisterCourse={handleStartRegistration}
             onOpenGuide={() => setGuideModalOpen(true)}
+            canOpenGuide={Boolean(adminUser)}
             onVerifyCert={() => setCertModalOpen(true)}
           />
         )}
@@ -207,7 +239,7 @@ export default function App() {
           adminUser ? (
             <AdminView
               adminUser={adminUser}
-              onLogout={handleAdminLogout}
+              onLogout={handleLogout}
               onNavigateHome={() => handleNavigate('home')}
             />
           ) : (
@@ -250,6 +282,7 @@ export default function App() {
         onNavigate={handleNavigate}
         onOpenGuide={() => setGuideModalOpen(true)}
         onVerifyCert={() => setCertModalOpen(true)}
+        canOpenGuide={Boolean(adminUser)}
       />
     </div>
   );
