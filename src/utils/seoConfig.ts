@@ -34,7 +34,7 @@ export const SEO_CONFIG: Record<string, PageSEOMetadata> = {
       },
       contactPoint: {
         '@type': 'ContactPoint',
-        telephone: '+91 9876543210',
+        telephone: '+91 7829455663',
         contactType: 'customer service',
         availableLanguage: ['English', 'Kannada', 'Hindi'],
       },
@@ -142,8 +142,8 @@ export const SEO_CONFIG: Record<string, PageSEOMetadata> = {
   },
   contact: {
     title: 'Contact Us | Silphor Technologies - Malleswaram, Bangalore',
-    description: 'Get in touch with Silphor Technologies headquarters at #45 East Road, Malleswaram, Bangalore. Phone: +91 9876543210. WhatsApp and official email support available.',
-    keywords: 'Silphor contact, Bangalore semiconductor office, Malleswaram East Road, WhatsApp support +919876543210',
+    description: 'Get in touch with Silphor Technologies headquarters at #45 East Road, Malleswaram, Bangalore. Phone: +91 7829455663. WhatsApp and official email support available at silphortechnologies@gmail.com.',
+    keywords: 'Silphor contact, Bangalore semiconductor office, Malleswaram East Road, WhatsApp support +917829455663',
     ogImage: '/og/og-contact.png',
     canonicalPath: '/contact-us',
     ogType: 'website',

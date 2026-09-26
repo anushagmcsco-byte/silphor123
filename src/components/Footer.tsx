@@ -230,31 +230,31 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenGuide, onVerif
               </div>
               <div className="flex items-center gap-2 pt-1">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="tel:+919876543210" className="text-slate-200 hover:text-white font-semibold">
-                  +91 9876543210
+                <a href="tel:+917829455663" className="text-slate-200 hover:text-white font-semibold">
+                  +91 7829455663
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-emerald-400 text-xs">💬</span>
                 <a
-                  href="https://wa.me/919876543210?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services"
+                  href="https://wa.me/917829455663?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-emerald-400 hover:text-emerald-300 font-medium underline text-[11px]"
                 >
-                  Chat on WhatsApp (+91 9876543210)
+                  Chat on WhatsApp (+91 7829455663)
                 </a>
               </div>
               <div className="space-y-1 pt-1">
                 <div className="flex items-center gap-2 text-[11px]">
                   <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <a href="mailto:contact@silphortechnologies.com" className="hover:text-white font-mono">
-                    contact@silphortechnologies.com
+                  <a href="mailto:silphortechnologies@gmail.com" className="hover:text-white font-mono">
+                    silphortechnologies@gmail.com
                   </a>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] pl-5">
-                  <a href="mailto:info@silphortechnologies.com" className="hover:text-white font-mono">
-                    info@silphortechnologies.com
+                  <a href="mailto:silphortechnologies@gmail.com" className="hover:text-white font-mono">
+                    silphortechnologies@gmail.com
                   </a>
                 </div>
               </div>

@@ -487,7 +487,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onRegisterCour
 
             <div className="flex items-center justify-between pt-2">
               <span className="text-slate-500 text-[11px]">
-                Bengaluru Head Office: <strong className="text-slate-700">Malleswaram Hub</strong> &bull; +91 9876543210
+                Bengaluru Head Office: <strong className="text-slate-700">Malleswaram Hub</strong> &bull; +91 7829455663
               </span>
               <button
                 type="submit"

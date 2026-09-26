@@ -337,7 +337,7 @@ export function dispatchForgotPasswordEmail(
           <span style="font-size: 12px; text-transform: uppercase; color: #475569; letter-spacing: 0.1em; display: block; margin-bottom: 6px;">Your 6-Digit Password Reset OTP</span>
           <span style="font-size: 28px; font-weight: bold; letter-spacing: 6px; color: #00828A; font-family: monospace;">${resetOtp}</span>
         </div>
-        <p style="font-size: 12px; color: #64748b;">This OTP expires in 15 minutes. If you did not request this reset, please ignore this email or report to security@silphor.com.</p>
+        <p style="font-size: 12px; color: #64748b;">This OTP expires in 15 minutes. If you did not request this reset, please ignore this email or report to silphortechnologies@gmail.com.</p>
       </div>
     `,
     sentAt: new Date().toISOString()
@@ -372,7 +372,7 @@ export function dispatchPasswordChangedEmail(
         <p>Hello <strong>${recipientName}</strong>,</p>
         <p>This is a confirmation that the password for your <strong>${role.toUpperCase()}</strong> portal was successfully changed on <strong>${new Date().toLocaleString()}</strong>.</p>
         <p>If you made this change, no further action is required. You can now log in using your new password.</p>
-        <p>If you did not initiate this change, please contact Silphor Cyber Security immediately at <a href="mailto:security@silphor.com">security@silphor.com</a> or helpline <a href="tel:+919876543210">+91 9876543210</a>.</p>
+        <p>If you did not initiate this change, please contact Silphor Cyber Security immediately at <a href="mailto:silphortechnologies@gmail.com">silphortechnologies@gmail.com</a> or helpline <a href="tel:+917829455663">+91 7829455663</a>.</p>
       </div>
     `,
     sentAt: new Date().toISOString()
