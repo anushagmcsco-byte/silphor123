@@ -29,7 +29,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
   onBackToHome,
 }) => {
   const [email, setEmail] = useState('admin@silphor.com');
-  const [password, setPassword] = useState('silphor#2026');
+  const [password, setPassword] = useState('');
   const [otpCode, setOtpCode] = useState('849201');
   const [useOtp, setUseOtp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -71,7 +71,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
 
   const handleSelectPreset = (account: typeof presetAccounts[0]) => {
     setEmail(account.email);
-    setPassword(account.password);
+    setPassword('');
     setErrorMessage('');
   };
 
@@ -89,6 +89,14 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
       return;
     }
 
+    const matched = presetAccounts.find((account) =>
+      account.email.toLowerCase() === email.toLowerCase() && account.password === password
+    );
+    if (!matched) {
+      setErrorMessage('Invalid administrative email or password.');
+      return;
+    }
+
     setIsLoading(true);
     setAuthStage('Verifying administrative credentials against directory...');
 
@@ -98,11 +106,10 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
         setAuthStage('Establishing encrypted administrator session...');
         setTimeout(() => {
           setIsLoading(false);
-          const matched = presetAccounts.find((p) => p.email.toLowerCase() === email.toLowerCase());
           onLoginSuccess({
-            name: matched ? matched.name : 'System Administrator',
+            name: matched.name,
             email: email,
-            role: matched ? matched.role : 'Super Administrator',
+            role: matched.role,
           });
         }, 500);
       }, 500);
@@ -181,9 +188,9 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#00828A]" />
-                  <span>Quick Demo Admin Credentials:</span>
+                  <span>Admin Account Shortcuts:</span>
                 </span>
-                <span className="text-[10px] text-slate-400">Click to fill</span>
+                <span className="text-[10px] text-slate-400">Select email; enter password</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {presetAccounts.map((acc) => (
