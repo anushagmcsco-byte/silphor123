@@ -172,10 +172,10 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({ onNavigate
                 </p>
                 <div className="pt-1">
                   <a
-                    href="mailto:contact@silphortechnologies.com?subject=DPDP%20Data%20Subject%20Request"
+                    href="mailto:silphortechnologies@gmail.com?subject=DPDP%20Data%20Subject%20Request"
                     className="text-xs text-[#38BDF8] hover:underline font-semibold flex items-center gap-1"
                   >
-                    <span>contact@silphortechnologies.com</span>
+                    <span>silphortechnologies@gmail.com</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -204,8 +204,8 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({ onNavigate
                   <div className="text-white font-bold">SILPHOR TECHNOLOGIES PRIVATE LIMITED</div>
                   <div className="text-slate-300">Registered Office: #45 East Road, Malleswaram, Bangalore, Karnataka - 560003, India</div>
                   <div className="text-slate-400">Landmark: Near 8th Cross Cultural Hub & Malleswaram Ground</div>
-                  <div className="text-teal-400">Official Electronic Mail: contact@silphortechnologies.com / info@silphortechnologies.com</div>
-                  <div className="text-slate-300">Direct Telephone & WhatsApp: +91 9876543210</div>
+                  <div className="text-teal-400">Official Electronic Mail: silphortechnologies@gmail.com</div>
+                  <div className="text-slate-300">Direct Telephone & WhatsApp: +91 7829455663</div>
                 </div>
                 <p>
                   This Privacy Policy applies to personal data collected through our corporate website, academic student LMS, cloud Linux EDA workstation clusters, offline campus admissions, and recruitment placement portals.
@@ -433,9 +433,9 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({ onNavigate
                     <span>Electronic Redressal Desk</span>
                   </div>
                   <div className="space-y-1 text-slate-300 pl-6">
-                    <div>Official Email: <a href="mailto:contact@silphortechnologies.com" className="text-[#38BDF8] hover:underline font-mono">contact@silphortechnologies.com</a></div>
-                    <div>Support Email: <a href="mailto:info@silphortechnologies.com" className="text-[#38BDF8] hover:underline font-mono">info@silphortechnologies.com</a></div>
-                    <div>Dedicated Hotline: <a href="tel:+919876543210" className="text-white hover:underline font-mono">+91 9876543210</a></div>
+                    <div>Official Email: <a href="mailto:silphortechnologies@gmail.com" className="text-[#38BDF8] hover:underline font-mono">silphortechnologies@gmail.com</a></div>
+                    <div>Support Email: <a href="mailto:silphortechnologies@gmail.com" className="text-[#38BDF8] hover:underline font-mono">silphortechnologies@gmail.com</a></div>
+                    <div>Dedicated Hotline: <a href="tel:+917829455663" className="text-white hover:underline font-mono">+91 7829455663</a></div>
                     <div className="text-[11px] text-teal-400 pt-1">Response Timeframe: Acknowledgment within 24 hours, resolution within 15 working days.</div>
                   </div>
                 </div>

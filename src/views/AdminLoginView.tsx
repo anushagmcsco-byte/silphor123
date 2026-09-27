@@ -383,7 +383,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
                   <span>Reset instructions dispatched!</span>
                 </div>
                 <p>
-                  Check your inbox at <strong>{resetEmail || email}</strong>. For urgent recovery, contact IT Security at <code>security@silphor.com</code>.
+                  Check your inbox at <strong>{resetEmail || email}</strong>. For urgent recovery, contact IT Security at <code>silphortechnologies@gmail.com</code>.
                 </p>
                 <button
                   type="button"

@@ -220,7 +220,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
       applicationNumber: `SIL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       fullName: '',
       email: '',
-      mobile: '+91 9876543210',
+      mobile: '+91 7829455663',
       collegeOrCompany: '',
       courseTitle: courses[0]?.title || 'Advanced VLSI Design & Physical Implementation',
       batchName: 'Autumn 2026 Cohort A (Weekday Evening)',
@@ -259,7 +259,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         applicationNumber: regForm.applicationNumber || `SIL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
         fullName: regForm.fullName || '',
         email: regForm.email || '',
-        mobile: regForm.mobile || '+91 9876543210',
+        mobile: regForm.mobile || '+91 7829455663',
         collegeOrCompany: regForm.collegeOrCompany || 'Independent Candidate',
         courseId: 'crs-vlsi-01',
         courseTitle: regForm.courseTitle || 'Advanced VLSI Design & Physical Implementation',
@@ -1496,7 +1496,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                     type="tel"
                     value={regForm.mobile || ''}
                     onChange={(e) => setRegForm({ ...regForm, mobile: e.target.value })}
-                    placeholder="+91 9876543210"
+                    placeholder="+91 7829455663"
                     className="w-full px-3.5 py-2 border border-slate-300 rounded-xl"
                   />
                 </div>

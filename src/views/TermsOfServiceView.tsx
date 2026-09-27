@@ -172,10 +172,10 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({ onNaviga
                 </p>
                 <div className="pt-1">
                   <a
-                    href="mailto:contact@silphortechnologies.com?subject=Legal%20Query%20re:%20Terms%20of%20Service"
+                    href="mailto:silphortechnologies@gmail.com?subject=Legal%20Query%20re:%20Terms%20of%20Service"
                     className="text-xs text-[#38BDF8] hover:underline font-semibold flex items-center gap-1"
                   >
-                    <span>contact@silphortechnologies.com</span>
+                    <span>silphortechnologies@gmail.com</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -442,9 +442,9 @@ export const TermsOfServiceView: React.FC<TermsOfServiceViewProps> = ({ onNaviga
                     <span>Direct Telephone & Electronic Channels</span>
                   </div>
                   <div className="space-y-1 text-slate-300 pl-6">
-                    <div>Direct Telephone: <a href="tel:+919876543210" className="text-white hover:underline font-mono">+91 9876543210</a></div>
-                    <div>General Email: <a href="mailto:contact@silphortechnologies.com" className="text-[#38BDF8] hover:underline font-mono">contact@silphortechnologies.com</a></div>
-                    <div>Support Email: <a href="mailto:info@silphortechnologies.com" className="text-[#38BDF8] hover:underline font-mono">info@silphortechnologies.com</a></div>
+                    <div>Direct Telephone: <a href="tel:+917829455663" className="text-white hover:underline font-mono">+91 7829455663</a></div>
+                    <div>General Email: <a href="mailto:silphortechnologies@gmail.com" className="text-[#38BDF8] hover:underline font-mono">silphortechnologies@gmail.com</a></div>
+                    <div>Support Email: <a href="mailto:silphortechnologies@gmail.com" className="text-[#38BDF8] hover:underline font-mono">silphortechnologies@gmail.com</a></div>
                   </div>
                 </div>
               </div>

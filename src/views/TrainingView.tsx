@@ -354,7 +354,7 @@ export const TrainingView: React.FC<TrainingViewProps> = ({ onRegisterCourse, on
 
                 <div className="flex items-center justify-between pt-2">
                   <span className="text-[11px] text-slate-500">
-                    Direct Counselor Hotline: <strong className="text-[#00828A]">+91 9876543210</strong>
+                    Direct Counselor Hotline: <strong className="text-[#00828A]">+91 7829455663</strong>
                   </span>
                   <button
                     type="submit"

@@ -270,7 +270,7 @@ export default function App() {
         onClose={() => setCertModalOpen(false)}
       />
 
-      {/* Global Floating Actions: Direct Helpline (+91 9876543210) & Virtual Chatbot */}
+      {/* Global Floating Actions: Direct Helpline (+91 7829455663) & Virtual Chatbot */}
       <FloatingSupportWidgets
         onNavigate={handleNavigate}
         onOpenCertificateModal={() => setCertModalOpen(true)}

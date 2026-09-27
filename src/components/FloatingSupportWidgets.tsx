@@ -48,8 +48,8 @@ export const FloatingSupportWidgets: React.FC<FloatingSupportWidgetsProps> = ({
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const directPhone = '+91 9876543210';
-  const cleanPhone = '9876543210';
+  const directPhone = '+91 7829455663';
+  const cleanPhone = '7829455663';
   const whatsappUrl = `https://wa.me/91${cleanPhone}?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services`;
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ export const FloatingSupportWidgets: React.FC<FloatingSupportWidgetsProps> = ({
         action: () => handleSendPrompt('Where is your Bangalore office located?'),
       },
       {
-        label: 'Chat on WhatsApp (+91 9876543210)',
+        label: 'Chat on WhatsApp (+91 7829455663)',
         action: () => window.open(whatsappUrl, '_blank'),
       },
       {
@@ -135,7 +135,7 @@ Fee: ₹45,000 (scholarships available).`;
             },
           },
           {
-            label: 'Speak with VLSI Advisor (+91 9876543210)',
+            label: 'Speak with VLSI Advisor (+91 7829455663)',
             action: () => window.open(`tel:+91${cleanPhone}`),
           },
         ];
@@ -154,7 +154,7 @@ EMI options and multi-gateway payments (Razorpay/Cashfree/UPI) are supported wit
             },
           },
           {
-            label: 'Chat on WhatsApp (+91 9876543210)',
+            label: 'Chat on WhatsApp (+91 7829455663)',
             action: () => window.open(whatsappUrl, '_blank'),
           },
         ];
@@ -162,7 +162,7 @@ EMI options and multi-gateway payments (Razorpay/Cashfree/UPI) are supported wit
         replyText = `📍 **Silphor Technologies Corporate Headquarters & Labs:**
 #45 East Road, Malleswaram, Bangalore, Karnataka - 560003, India.
 **Landmark:** Near 8th Cross Cultural Hub & Malleswaram Ground.
-**Phone / WhatsApp:** +91 9876543210
+**Phone / WhatsApp:** +91 7829455663
 **Operational Hours:**
 • Monday - Friday: 9:00 AM - 7:00 PM IST
 • Saturday: 9:30 AM - 5:30 PM IST`;
@@ -175,7 +175,7 @@ EMI options and multi-gateway payments (Razorpay/Cashfree/UPI) are supported wit
             },
           },
           {
-            label: 'Direct Call (+91 9876543210)',
+            label: 'Direct Call (+91 7829455663)',
             action: () => window.open(`tel:+91${cleanPhone}`),
           },
         ];
@@ -210,10 +210,10 @@ EMI options and multi-gateway payments (Razorpay/Cashfree/UPI) are supported wit
         ];
       } else {
         replyText = `Thank you for your enquiry! Our semiconductor advisors are available right now to assist you directly with admissions, corporate EDA licensing, or engineering staffing.
-You can call or WhatsApp our official direct helpline at **+91 9876543210** or email **contact@silphortechnologies.com**.`;
+You can call or WhatsApp our official direct helpline at **+91 7829455663** or email **silphortechnologies@gmail.com**.`;
         actions = [
           {
-            label: 'Direct Call (+91 9876543210)',
+            label: 'Direct Call (+91 7829455663)',
             action: () => window.open(`tel:+91${cleanPhone}`),
           },
           {
@@ -249,7 +249,7 @@ You can call or WhatsApp our official direct helpline at **+91 9876543210** or e
       {/* FLOATING ACTION DOCK (Bottom-Right of the entire website) */}
       <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3 pointer-events-auto">
         
-        {/* BUTTON 1: DIRECT CALL & WHATSAPP FLOATING BUTTON (Redirect to +91 9876543210) */}
+        {/* BUTTON 1: DIRECT CALL & WHATSAPP FLOATING BUTTON (Redirect to +91 7829455663) */}
         <div className="relative">
           {/* Popover Card on Click */}
           {callPopoverOpen && (
@@ -327,8 +327,8 @@ You can call or WhatsApp our official direct helpline at **+91 9876543210** or e
             <button
               onClick={() => setCallPopoverOpen(!callPopoverOpen)}
               className="flex items-center gap-2 py-2.5 px-3.5 sm:px-4 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 group cursor-pointer"
-              title="Click to Call or WhatsApp +91 9876543210"
-              aria-label="Direct Phone & WhatsApp +91 9876543210"
+              title="Click to Call or WhatsApp +91 7829455663"
+              aria-label="Direct Phone & WhatsApp +91 7829455663"
             >
               <div className="relative">
                 <Phone className="w-4 h-4 animate-bounce" />

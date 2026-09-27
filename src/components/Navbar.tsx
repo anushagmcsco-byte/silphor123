@@ -120,11 +120,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
             <span className="hidden sm:inline text-slate-500">|</span>
             <a
-              href="tel:+919876543210"
+              href="tel:+917829455663"
               className="text-emerald-400 font-mono font-bold hover:underline flex items-center gap-1 shrink-0 text-[11px] sm:text-xs"
             >
               <Phone className="w-3 h-3 hidden xs:inline" />
-              <span>+91 9876543210</span>
+              <span>+91 7829455663</span>
             </a>
           </div>
 
@@ -262,9 +262,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {/* Submenu Dropdown */}
                   {hasDropdown && openDropdown === item.id && (
                     <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase px-3 py-1 tracking-wider border-b border-slate-100">
-                        {item.label} Modules
-                      </div>
                       <div className="py-1">
                         {item.subItems?.map((sub) => (
                           <a
@@ -333,9 +330,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   {hasDropdown && openDropdown === item.id && (
                     <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase px-3 py-1 tracking-wider border-b border-slate-100">
-                        {item.label} Modules
-                      </div>
                       <div className="py-1">
                         {item.subItems?.map((sub) => (
                           <a
@@ -664,14 +658,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="pt-3 space-y-2 border-t border-slate-200">
             <div className="grid grid-cols-2 gap-2">
               <a
-                href="tel:+919876543210"
+                href="tel:+917829455663"
                 className="py-2 px-3 text-xs font-bold text-white bg-[#00828A] hover:bg-[#007077] rounded-xl flex items-center justify-center gap-1.5 text-center shadow-xs"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>Call Us</span>
               </a>
               <a
-                href="https://wa.me/919876543210?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services"
+                href="https://wa.me/917829455663?text=Hello%20Silphor%20Technologies,%20I%20would%20like%20to%20enquire%20about%20your%20services"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="py-2 px-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl flex items-center justify-center gap-1.5 text-center shadow-xs"
