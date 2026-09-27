@@ -11,7 +11,6 @@ import {
   Code2, 
   Award,
   Sparkles,
-  Lock,
   LogOut,
   Phone,
   MessageSquare,
@@ -487,22 +486,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>Apply & Register</span>
                 </a>
 
-                <a
-                  href="/admin-login"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onAdminLoginClick();
-                  }}
-                  className={`px-2.5 xl:px-3 py-1.5 xl:py-2 text-xs font-semibold rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                    activeTab === 'admin-login'
-                      ? 'bg-[#0B2545] text-white border-[#0B2545]'
-                      : 'text-slate-700 hover:text-[#0B2545] bg-slate-50 hover:bg-slate-100 border-slate-200 shadow-2xs'
-                  }`}
-                  title="Administrative Login"
-                >
-                  <Lock className="w-3.5 h-3.5 text-[#00828A] shrink-0" />
-                  <span className="whitespace-nowrap">Admin Login</span>
-                </a>
               </div>
             )}
           </div>
@@ -542,8 +525,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden relative z-40 bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 max-h-[calc(100vh-100px)] overflow-y-auto shadow-2xl animate-in slide-in-from-top-2 duration-200">
-          {/* Admin Login / Console state */}
-          {isAuthenticated ? (
+          {/* Authenticated portal controls */}
+          {isAuthenticated && (
             <div className="p-3 bg-[#0B2545] rounded-xl text-white space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold flex items-center gap-1.5 text-emerald-400">
@@ -577,21 +560,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
             </div>
-          ) : (
-            <a
-              href="/admin-login"
-              onClick={(e) => {
-                e.preventDefault();
-                onAdminLoginClick();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xs hover:bg-slate-800 transition-colors cursor-pointer block text-center"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Lock className="w-4 h-4 text-[#38BDF8]" />
-                <span>Admin Panel Login (Staff / Faculty)</span>
-              </div>
-            </a>
           )}
 
           {/* Guide CTA on mobile */}
