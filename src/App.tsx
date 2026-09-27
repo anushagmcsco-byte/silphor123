@@ -34,6 +34,20 @@ export default function App() {
   const [guideModalOpen, setGuideModalOpen] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
   const [preselectedCourseId, setPreselectedCourseId] = useState<string | undefined>();
+  const [fontScale, setFontScale] = useState<number>(() => {
+    if (typeof window === 'undefined') {
+      return 1;
+    }
+
+    const savedScale = window.localStorage.getItem('silphor-font-scale');
+    const parsedScale = Number(savedScale);
+
+    if (!Number.isFinite(parsedScale)) {
+      return 1;
+    }
+
+    return Math.min(1.5, Math.max(0.8, parsedScale));
+  });
 
   // Centralized navigation function that updates both state and URL in the address bar
   const handleNavigate = useCallback((target: AppNavTarget, pushState = true) => {
@@ -70,6 +84,15 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updatePageSEO(activeTab);
   }, [activeTab]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--site-font-scale', String(fontScale));
+    window.localStorage.setItem('silphor-font-scale', String(fontScale));
+  }, [fontScale]);
+
+  const handleAdjustFontScale = (delta: number) => {
+    setFontScale((currentScale) => Math.min(1.5, Math.max(0.8, Number((currentScale + delta).toFixed(2)))));
+  };
 
   const handleStartRegistration = (courseId?: string) => {
     setPreselectedCourseId(courseId);
@@ -154,6 +177,9 @@ export default function App() {
         canOpenGuide={Boolean(adminUser)}
         onOpenCertificateModal={() => setCertModalOpen(true)}
         onStartRegistration={handleStartRegistration}
+        fontScale={fontScale}
+        onIncreaseFontScale={() => handleAdjustFontScale(0.1)}
+        onDecreaseFontScale={() => handleAdjustFontScale(-0.1)}
       />
 
       {/* Main Content Area */}
