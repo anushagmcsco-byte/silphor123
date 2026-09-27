@@ -31,6 +31,9 @@ interface NavbarProps {
   onOpenCertificateModal: () => void;
   onStartRegistration: (courseId?: string) => void;
   canOpenGuide?: boolean;
+  fontScale: number;
+  onIncreaseFontScale: () => void;
+  onDecreaseFontScale: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -46,6 +49,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCertificateModal,
   onStartRegistration,
   canOpenGuide = false,
+  fontScale,
+  onIncreaseFontScale,
+  onDecreaseFontScale,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -130,6 +136,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right: Quick actions & Dynamic Integration Guide button */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div className="flex items-center rounded-lg border border-slate-700 bg-slate-800/80 px-1 py-0.5 shadow-sm">
+              <button
+                type="button"
+                onClick={onDecreaseFontScale}
+                aria-label="Decrease font size"
+                title="Decrease font size"
+                className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-slate-200 transition-colors hover:bg-slate-700 hover:text-white cursor-pointer"
+              >
+                A-
+              </button>
+              <button
+                type="button"
+                onClick={onIncreaseFontScale}
+                aria-label="Increase font size"
+                title="Increase font size"
+                className="flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-slate-200 transition-colors hover:bg-slate-700 hover:text-white cursor-pointer"
+              >
+                A+
+              </button>
+            </div>
+
             {/* Guide Button */}
             {canOpenGuide && <button
               onClick={onOpenGuide}
